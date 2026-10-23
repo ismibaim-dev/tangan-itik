@@ -1,7 +1,8 @@
 name: Release
 
 # Pushing a version tag (for example v1.0.0) checks the code again and publishes a
-# GitHub release, using that version's section of CHANGELOG.md as the notes.
+# GitHub release, using that version's section of CHANGELOG.md as the notes. If the
+# release was already published from the web UI, its notes are updated instead.
 on:
   push:
     tags: ['v*']
@@ -35,4 +36,11 @@ jobs:
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --verify-tag --title "GripWise $GITHUB_REF_NAME" --notes-file release-notes.md
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            # Published from the GitHub web UI, which creates the tag and fires this workflow:
+            # keep that release and replace its notes with the changelog section.
+            gh release edit "$GITHUB_REF_NAME" --notes-file release-notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --verify-tag --title "GripWise $GITHUB_REF_NAME" --notes-file release-notes.md
+          fi
