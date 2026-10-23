@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Calm, clinical green-teal for the brand and primary actions. */
+  --color-brand-50: #ecf7f4;
+  --color-brand-100: #d3ede6;
+  --color-brand-200: #a8dbcd;
+  --color-brand-300: #74c2af;
+  --color-brand-400: #45a48f;
+  --color-brand-500: #2b8875;
+  --color-brand-600: #1f6e5f;
+  --color-brand-700: #1b594d;
+  --color-brand-800: #18473f;
+  --color-brand-900: #133933;
+  --color-brand-950: #0b2420;
+
+  /* Warm coral reserved for pain, warnings and the active timer. */
+  --color-coral-50: #fff4ef;
+  --color-coral-100: #ffe3d7;
+  --color-coral-200: #fdc5ae;
+  --color-coral-400: #f4845f;
+  --color-coral-500: #e9643b;
+  --color-coral-600: #cc4d27;
+  --color-coral-700: #a63d1f;
+
+  /* Warm neutral surfaces. */
+  --color-sand-50: #fcfbf8;
+  --color-sand-100: #f6f3ed;
+  --color-sand-200: #ebe6dc;
+  --color-sand-300: #dcd5c7;
+
+  --color-ink: #15302d;
+  --color-ink-soft: #4b5f5c;
+  --color-ink-faint: #627270;
+
+  --shadow-card: 0 1px 2px rgb(21 48 45 / 0.04), 0 4px 16px rgb(21 48 45 / 0.06);
+  --shadow-lift: 0 8px 30px rgb(21 48 45 / 0.12);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-sand-200 font-sans text-ink antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
