@@ -3,6 +3,16 @@
 All notable changes to GripWise are listed here. Versions follow [semantic versioning](https://semver.org/).
 The release workflow publishes each version's section below as its GitHub release notes.
 
+## [Unreleased]
+
+### Fixed
+
+- The release workflow no longer fails when a release was already published from the GitHub web UI. It now replaces that release's notes with the version's changelog section.
+
+### Changed
+
+- CI and release workflows use `actions/checkout` and `actions/setup-node` v5, which run on Node 24 instead of the deprecated Node 20.
+
 ## [1.0.0] - 2026-10-23
 
 First release of GripWise, a full-stack web app for guided carpal tunnel rehabilitation.
