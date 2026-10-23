@@ -1,11 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { AppShell } from './components/AppShell';
-import { RequireAccount, SignedOutOnly } from './components/Guards';
+import { BeforeOnboarding, RequireAccount } from './components/Guards';
 import { ExerciseDetailPage } from './pages/ExerciseDetail';
 import { ExercisesPage } from './pages/Exercises';
 import { HomePage } from './pages/Home';
 import { LogPage } from './pages/Log';
-import { LoginPage, RegisterPage } from './pages/Auth';
 import { OnboardingPage } from './pages/Onboarding';
 import { ProfilePage } from './pages/Profile';
 import { SessionPage } from './pages/Session';
@@ -13,10 +12,8 @@ import { WeeklyCheckPage } from './pages/WeeklyCheck';
 import { WelcomePage } from './pages/Welcome';
 
 export const router = createBrowserRouter([
-  { path: '/welcome', element: <SignedOutOnly><WelcomePage /></SignedOutOnly> },
-  { path: '/login', element: <SignedOutOnly><LoginPage /></SignedOutOnly> },
-  { path: '/register', element: <SignedOutOnly><RegisterPage /></SignedOutOnly> },
-  { path: '/onboarding', element: <RequireAccount><OnboardingPage /></RequireAccount> },
+  { path: '/welcome', element: <BeforeOnboarding><WelcomePage /></BeforeOnboarding> },
+  { path: '/onboarding', element: <BeforeOnboarding><OnboardingPage /></BeforeOnboarding> },
   { path: '/session', element: <RequireAccount><SessionPage /></RequireAccount> },
   { path: '/check', element: <RequireAccount><WeeklyCheckPage /></RequireAccount> },
   {

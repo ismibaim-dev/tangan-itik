@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import { ChevronRight, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { useExercises } from '../api/hooks';
-import type { ExerciseCategory, Phase } from '../api/types';
+import { useExercises } from '../data/hooks';
+import type { ExerciseCategory, Phase } from '../data/types';
 import { ErrorState, PageHeader, Spinner } from '../components/ui';
 import { categoryMeta, doseLabel, phaseNames } from '../lib/exercise-meta';
 

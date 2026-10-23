@@ -1,8 +1,8 @@
 name: Release
 
-# Pushing a version tag (for example v1.0.0) checks the code again and publishes a
-# GitHub release, using that version's section of CHANGELOG.md as the notes. If the
-# release was already published from the web UI, its notes are updated instead.
+# Pushing a version tag (for example v2.0.0), or publishing a release from the web UI, checks the
+# code again, builds the Android APK and attaches it to the GitHub release. The notes come from
+# that version's section of CHANGELOG.md.
 on:
   push:
     tags: ['v*']
@@ -19,19 +19,69 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - run: npm run build
+
+      - name: Work out the version
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if ! [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME must look like v1.2.3"
+            exit 1
+          fi
+          # Android needs an ever-increasing integer: 1.2.3 becomes 10203.
+          code=$(( BASH_REMATCH[1] * 10000 + BASH_REMATCH[2] * 100 + BASH_REMATCH[3] ))
+          echo "name=$version" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
 
       - name: Extract release notes from CHANGELOG.md
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          version="${{ steps.version.outputs.name }}"
           awk -v v="$version" '/^## /{ p = index($0, "[" v "]") > 0; next } p' CHANGELOG.md > release-notes.md
           if [ ! -s release-notes.md ]; then
             echo "::error::CHANGELOG.md has no section for $version"
             exit 1
           fi
+
+      - name: Build the web app into the Android project
+        env:
+          APP_VERSION: ${{ steps.version.outputs.name }}
+        run: npm run android:sync
+
+      - name: Build the APK
+        working-directory: client/android
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          versions="-PappVersionName=${{ steps.version.outputs.name }} -PappVersionCode=${{ steps.version.outputs.code }}"
+          apk="$GITHUB_WORKSPACE/gripwise-$GITHUB_REF_NAME.apk"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
+            ./gradlew assembleRelease --no-daemon $versions
+            cp app/build/outputs/apk/release/app-release.apk "$apk"
+          else
+            # Without a signing key, ship a debug-signed APK so the release is still installable,
+            # and say so in the notes: updating it later means reinstalling.
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret; attaching a debug-signed APK"
+            ./gradlew assembleDebug --no-daemon $versions
+            cp app/build/outputs/apk/debug/app-debug.apk "$apk"
+            cat >> "$GITHUB_WORKSPACE/release-notes.md" <<'NOTE'
+
+          > **Note:** this APK is signed with a temporary debug key. Android won't install a later version over it, so before updating, export your data from Profile > Your data, then uninstall and install the new APK.
+          NOTE
+          fi
+          cd "$GITHUB_WORKSPACE" && sha256sum "$(basename "$apk")" > "$apk.sha256"
 
       - name: Publish GitHub release
         env:
@@ -44,3 +94,4 @@ jobs:
           else
             gh release create "$GITHUB_REF_NAME" --verify-tag --title "GripWise $GITHUB_REF_NAME" --notes-file release-notes.md
           fi
+          gh release upload "$GITHUB_REF_NAME" "gripwise-$GITHUB_REF_NAME.apk" "gripwise-$GITHUB_REF_NAME.apk.sha256" --clobber

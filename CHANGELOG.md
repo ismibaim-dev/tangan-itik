@@ -3,15 +3,31 @@
 All notable changes to GripWise are listed here. Versions follow [semantic versioning](https://semver.org/).
 The release workflow publishes each version's section below as its GitHub release notes.
 
-## [Unreleased]
+## [2.0.0] - 2026-10-23
+
+GripWise is now an Android app. Everything stays on the phone: there is no server and no account.
+
+### Added
+
+- **Android app:** an APK built with Capacitor is attached to every GitHub release, ready to download and install on Android 6.0 or newer.
+- **On-device storage:** all data lives in a SQLite database in the app's private storage, using the same schema and programme rules as before.
+- **CSV export:** Profile > Your data exports everything as five CSV files (profile, sessions, exercises per session, symptom logs and weekly checks) through Android's share sheet, so they can be saved to Files or Drive, or emailed.
+- **Daily reminder notification** at the practice time chosen in onboarding, which can be switched on or off in Profile.
+- **Erase all data** in Profile.
+
+### Changed
+
+- No sign-up or sign-in. Onboarding asks for a first name instead.
+- CI builds a debug APK for every change, downloadable from the run's artifacts.
+- CI and release workflows use `actions/checkout` and `actions/setup-node` v5, which run on Node 24 instead of the deprecated Node 20.
 
 ### Fixed
 
 - The release workflow no longer fails when a release was already published from the GitHub web UI. It now replaces that release's notes with the version's changelog section.
 
-### Changed
+### Removed
 
-- CI and release workflows use `actions/checkout` and `actions/setup-node` v5, which run on Node 24 instead of the deprecated Node 20.
+- The Express API server, server-side database and Docker image. Version 1.0.0 was never hosted, so there is no server data to migrate.
 
 ## [1.0.0] - 2026-10-23
 

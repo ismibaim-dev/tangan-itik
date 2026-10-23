@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router';
-import { useAccount } from '../api/hooks';
+import { Navigate } from 'react-router';
+import { useAccount } from '../data/hooks';
 import { Frame } from './AppShell';
 import { ErrorState, Spinner } from './ui';
 
@@ -12,30 +12,28 @@ function Splash() {
   );
 }
 
-/** Signed-in screens. Sends new users through onboarding first. */
+function LoadError({ error, retry }: { error: unknown; retry: () => void }) {
+  return (
+    <Frame className="pt-20">
+      <ErrorState error={error} onRetry={retry} />
+    </Frame>
+  );
+}
+
+/** Screens that need a profile. Until onboarding is done, everything starts at the welcome screen. */
 export function RequireAccount({ children }: { children: ReactNode }) {
   const { data: account, isPending, error, refetch } = useAccount();
-  const location = useLocation();
-
   if (isPending) return <Splash />;
-  if (error) {
-    return (
-      <Frame className="pt-20">
-        <ErrorState error={error} onRetry={() => refetch()} />
-      </Frame>
-    );
-  }
+  if (error) return <LoadError error={error} retry={() => refetch()} />;
   if (!account) return <Navigate to="/welcome" replace />;
-  const onboarding = location.pathname === '/onboarding';
-  if (!account.profile.onboarded && !onboarding) return <Navigate to="/onboarding" replace />;
-  if (account.profile.onboarded && onboarding) return <Navigate to="/" replace />;
   return children;
 }
 
-/** Welcome and sign-in screens, which make no sense once signed in. */
-export function SignedOutOnly({ children }: { children: ReactNode }) {
-  const { data: account, isPending } = useAccount();
+/** Welcome and onboarding, which only make sense before a profile exists. */
+export function BeforeOnboarding({ children }: { children: ReactNode }) {
+  const { data: account, isPending, error, refetch } = useAccount();
   if (isPending) return <Splash />;
+  if (error) return <LoadError error={error} retry={() => refetch()} />;
   if (account) return <Navigate to="/" replace />;
   return children;
 }

@@ -1,18 +1,16 @@
 import clsx from 'clsx';
-import { CalendarPlus, LogOut, ShieldCheck, Trash2 } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
-import {
-  useChangePhase,
-  useDeleteAccount,
-  useLogout,
-  useSignedInAccount,
-  useUpdateProfile,
-  type ProfileUpdate,
-} from '../api/hooks';
-import type { Hand, Phase, SymptomDuration } from '../api/types';
+import { Bell, BellOff, CalendarPlus, FileSpreadsheet, ShieldCheck, Smartphone, Trash2 } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { useChangePhase, useEraseAllData, useRequiredAccount, useUpdateProfile } from '../data/hooks';
+import type { ProfileUpdate } from '../data/repository';
+import { store } from '../data/store';
+import type { Hand, Phase, SymptomDuration } from '../data/types';
 import { useToast } from '../components/Toast';
 import { Button, Card, Field, FormError, Input, PageHeader, SectionTitle, Segmented } from '../components/ui';
+import { localDate } from '../lib/dates';
 import { phaseNames } from '../lib/exercise-meta';
+import { deliverCsvFiles } from '../lib/export';
+import { canNotify, reminderStatus, setDailyReminder, type ReminderStatus } from '../lib/notifications';
 import { downloadReminder } from '../lib/reminder';
 
 const GOAL_OPTIONS = [
@@ -24,8 +22,7 @@ const GOAL_OPTIONS = [
 ];
 
 export function ProfilePage() {
-  const { user, profile } = useSignedInAccount();
-  const logout = useLogout();
+  const { user, profile } = useRequiredAccount();
 
   return (
     <div>
@@ -37,9 +34,9 @@ export function ProfilePage() {
           </span>
           <div className="min-w-0">
             <p className="truncate text-lg font-bold">{user.name}</p>
-            <p className="truncate text-sm text-ink-soft">{user.email}</p>
-            <p className="text-xs text-ink-faint">
-              Member since {new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+            <p className="text-sm text-ink-soft">
+              Using GripWise since{' '}
+              {new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
             </p>
           </div>
         </Card>
@@ -47,23 +44,8 @@ export function ProfilePage() {
         <ProgrammeCard phase={profile.phase} />
         <DetailsForm />
 
-        <Card>
-          <SectionTitle>Daily reminder</SectionTitle>
-          <p className="text-sm text-ink-soft">
-            {profile.reminderTime
-              ? `Add a repeating ${formatTime(profile.reminderTime)} reminder to your phone's calendar so you never miss a session.`
-              : 'Set a practice time above, then add it to your calendar.'}
-          </p>
-          <Button
-            variant="secondary"
-            block
-            className="mt-4"
-            disabled={!profile.reminderTime}
-            onClick={() => profile.reminderTime && downloadReminder(profile.reminderTime)}
-          >
-            <CalendarPlus className="size-4" aria-hidden /> Add to calendar
-          </Button>
-        </Card>
+        <ReminderCard reminderTime={profile.reminderTime} />
+        <DataCard />
 
         <section className="flex gap-3 rounded-3xl bg-sand-50 p-5 text-sm text-ink-soft ring-1 ring-sand-200">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />
@@ -73,10 +55,8 @@ export function ProfilePage() {
           </p>
         </section>
 
-        <Button variant="secondary" block loading={logout.isPending} onClick={() => logout.mutate()}>
-          <LogOut className="size-4" aria-hidden /> Sign out
-        </Button>
-        <DeleteAccount />
+        <EraseData />
+        <p className="-mt-2 mb-4 text-center text-xs text-ink-faint">GripWise v{__APP_VERSION__}</p>
       </div>
     </div>
   );
@@ -152,7 +132,7 @@ function ProgrammeCard({ phase }: { phase: Phase }) {
 }
 
 function DetailsForm() {
-  const { user, profile } = useSignedInAccount();
+  const { user, profile } = useRequiredAccount();
   const update = useUpdateProfile();
   const toast = useToast();
   const [form, setForm] = useState({
@@ -169,7 +149,14 @@ function DetailsForm() {
   function submit(event: FormEvent) {
     event.preventDefault();
     const body: ProfileUpdate = { ...form, reminderTime: form.reminderTime || null };
-    update.mutate(body, { onSuccess: () => toast('Profile saved') });
+    update.mutate(body, {
+      onSuccess: async (account) => {
+        toast('Profile saved');
+        // Move an active reminder to the new practice time.
+        const time = account.profile.reminderTime;
+        if (canNotify && time !== profile.reminderTime && (await reminderStatus()) === 'on') await setDailyReminder(time);
+      },
+    });
   }
 
   return (
@@ -259,47 +246,149 @@ function DetailsForm() {
   );
 }
 
-function DeleteAccount() {
-  const remove = useDeleteAccount();
+function ReminderCard({ reminderTime }: { reminderTime: string | null }) {
+  const toast = useToast();
+  const [status, setStatus] = useState<ReminderStatus | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (canNotify) reminderStatus().then(setStatus, () => setStatus('off'));
+  }, []);
+
+  async function toggle() {
+    setBusy(true);
+    try {
+      const next = await setDailyReminder(status === 'on' ? null : reminderTime);
+      setStatus(next);
+      if (next === 'on' && reminderTime) toast(`Reminder set for ${formatTime(reminderTime)}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <SectionTitle>Daily reminder</SectionTitle>
+      {!reminderTime ? (
+        <p className="text-sm text-ink-soft">Set a daily practice time above to get a reminder.</p>
+      ) : canNotify ? (
+        <>
+          <p className="text-sm text-ink-soft">
+            {status === 'on'
+              ? `You'll get a notification at ${formatTime(reminderTime)} every day.`
+              : status === 'denied'
+                ? 'Notifications are blocked for GripWise. Allow them in Android Settings > Apps > GripWise > Notifications.'
+                : `Get a notification at ${formatTime(reminderTime)} every day.`}
+          </p>
+          <Button
+            variant="secondary"
+            block
+            className="mt-4"
+            loading={busy || status === null}
+            onClick={toggle}
+          >
+            {status === 'on' ? (
+              <>
+                <BellOff className="size-4" aria-hidden /> Turn off reminder
+              </>
+            ) : (
+              <>
+                <Bell className="size-4" aria-hidden /> Remind me daily
+              </>
+            )}
+          </Button>
+        </>
+      ) : (
+        <>
+          <p className="text-sm text-ink-soft">
+            Add a repeating {formatTime(reminderTime)} reminder to your calendar so you never miss a session.
+          </p>
+          <Button variant="secondary" block className="mt-4" onClick={() => downloadReminder(reminderTime)}>
+            <CalendarPlus className="size-4" aria-hidden /> Add to calendar
+          </Button>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function DataCard() {
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<unknown>(null);
+
+  async function exportData() {
+    setBusy(true);
+    setError(null);
+    try {
+      const files = await store.buildCsvExport(localDate());
+      const result = await deliverCsvFiles(files);
+      if (result !== 'cancelled') toast(`Exported ${files.length} CSV files`);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <SectionTitle>Your data</SectionTitle>
+      <p className="flex gap-3 text-sm text-ink-soft">
+        <Smartphone className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+        Everything is stored only on this phone. Uninstalling GripWise deletes it, so export a copy now and then.
+      </p>
+      <p className="mt-3 text-sm text-ink-soft">
+        The export has one spreadsheet-ready CSV file each for your profile, sessions, exercises per session, symptom
+        logs and weekly checks.
+      </p>
+      <FormError error={error} />
+      <Button block className="mt-4" loading={busy} onClick={exportData}>
+        <FileSpreadsheet className="size-4" aria-hidden /> Export all data (CSV)
+      </Button>
+    </Card>
+  );
+}
+
+function EraseData() {
+  const erase = useEraseAllData();
   const [open, setOpen] = useState(false);
-  const [password, setPassword] = useState('');
+
+  async function eraseEverything() {
+    if (canNotify) await setDailyReminder(null).catch(() => undefined);
+    erase.mutate();
+  }
 
   if (!open) {
     return (
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mx-auto mb-4 flex items-center gap-2 py-2 text-sm font-semibold text-coral-600 hover:underline"
+        className="mx-auto flex items-center gap-2 py-2 text-sm font-semibold text-coral-600 hover:underline"
       >
-        <Trash2 className="size-4" aria-hidden /> Delete my account and data
+        <Trash2 className="size-4" aria-hidden /> Erase all data
       </button>
     );
   }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        remove.mutate(password);
-      }}
-      className="mb-4 grid gap-3 rounded-3xl bg-coral-50 p-5 ring-1 ring-coral-100"
-    >
-      <p className="font-bold text-coral-700">Delete account</p>
-      <p className="text-sm text-ink-soft">
-        This permanently removes your profile, sessions, symptom logs and weekly checks. It can't be undone.
+    <div className="grid gap-3 rounded-3xl bg-coral-50 p-5 ring-1 ring-coral-100" role="alertdialog" aria-labelledby="erase-title">
+      <p id="erase-title" className="font-bold text-coral-700">
+        Erase all data?
       </p>
-      <Field label="Confirm with your password">
-        <Input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-      </Field>
-      <FormError error={remove.error} />
+      <p className="text-sm text-ink-soft">
+        This deletes your profile, sessions, symptom logs and weekly checks from this phone. It can't be undone, so
+        export your data first if you want a copy.
+      </p>
+      <FormError error={erase.error} />
       <div className="flex gap-2">
-        <Button type="submit" variant="danger" loading={remove.isPending}>
-          Delete permanently
+        <Button variant="danger" loading={erase.isPending} onClick={eraseEverything}>
+          Erase everything
         </Button>
         <Button variant="ghost" onClick={() => setOpen(false)}>
           Cancel
         </Button>
       </div>
-    </form>
+    </div>
   );
 }
