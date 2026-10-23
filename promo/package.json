@@ -1,0 +1,27 @@
+{
+  "name": "gripwise-promo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "30-second motion graphics pitch video for GripWise, built with Remotion",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render GripWisePromo out/gripwise-promo.mp4",
+    "still": "remotion still GripWisePromo out/poster.png --frame=250",
+    "typecheck": "tsc --noEmit",
+    "music": "python3 scripts/music.py public/music.wav",
+    "prestudio": "npm run music",
+    "prerender": "npm run music"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.538",
+    "@remotion/transitions": "^4.0.538",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "remotion": "^4.0.538"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "typescript": "^5.9.3"
+  }
+}
