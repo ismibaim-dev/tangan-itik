@@ -10,6 +10,19 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // The styles need a 2023-or-newer browser engine (Chrome 111+). On an outdated Android WebView,
+      // explain how to fix it instead of showing a broken screen.
+      if (!window.CSS || !CSS.supports('color', 'color-mix(in oklch, red, blue)')) {
+        var root = document.getElementById('root');
+        root.dataset.unsupported = 'true';
+        root.innerHTML =
+          '<div style="font-family:sans-serif;padding:32px 24px;color:#15302d;line-height:1.5">' +
+          '<h1 style="font-size:22px">Please update Android System WebView</h1>' +
+          '<p>GripWise needs a newer version of Android System WebView, the part of Android that displays the app.</p>' +
+          '<p>Open the Play Store, search for <b>Android System WebView</b>, tap <b>Update</b>, then reopen GripWise.</p></div>';
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import { Bed, BriefcaseMedical, ChevronLeft, Clock, Hand, Info, Keyboard, Sparkles, Trophy } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
-import { useSignedInAccount, useUpdateProfile } from '../api/hooks';
-import type { Hand as HandSide, SymptomDuration } from '../api/types';
+import { useNavigate } from 'react-router';
+import { useCreateProfile } from '../data/hooks';
+import type { Hand as HandSide, SymptomDuration } from '../data/types';
 import { Frame } from '../components/AppShell';
 import { Button, Field, FormError, Input, OptionCard } from '../components/ui';
+import { canNotify, setDailyReminder } from '../lib/notifications';
 
 const GOALS: { label: string; icon: ReactNode }[] = [
   { label: 'Sleep through the night', icon: <Bed className="size-5" aria-hidden /> },
@@ -15,31 +17,51 @@ const GOALS: { label: string; icon: ReactNode }[] = [
 ];
 
 interface Answers {
+  name: string;
   affectedHand: HandSide | null;
   dominantHand: 'left' | 'right' | null;
   symptomDuration: SymptomDuration | null;
   postSurgery: boolean | null;
   goals: string[];
   reminderTime: string;
+  remind: boolean;
   acknowledged: boolean;
 }
 
 export function OnboardingPage() {
-  const { user } = useSignedInAccount();
-  const update = useUpdateProfile();
+  const navigate = useNavigate();
+  const create = useCreateProfile();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({
+    name: '',
     affectedHand: null,
     dominantHand: null,
     symptomDuration: null,
     postSurgery: null,
     goals: [],
     reminderTime: '19:00',
+    remind: true,
     acknowledged: false,
   });
   const set = <K extends keyof Answers>(key: K, value: Answers[K]) => setAnswers((a) => ({ ...a, [key]: value }));
 
   const steps: { title: string; subtitle?: string; ready: boolean; body: ReactNode }[] = [
+    {
+      title: 'What should we call you?',
+      subtitle: 'A first name is fine. Like everything else, it stays on this phone.',
+      ready: answers.name.trim().length > 0,
+      body: (
+        <Field label="First name">
+          <Input
+            autoFocus
+            autoComplete="given-name"
+            maxLength={80}
+            value={answers.name}
+            onChange={(e) => set('name', e.target.value)}
+          />
+        </Field>
+      ),
+    },
     {
       title: 'Which hand is affected?',
       subtitle: 'We will remind you which side to focus on.',
@@ -133,6 +155,17 @@ export function OnboardingPage() {
           <Field label="Daily practice time">
             <Input type="time" value={answers.reminderTime} onChange={(e) => set('reminderTime', e.target.value)} />
           </Field>
+          {canNotify && (
+            <label className="flex items-center gap-3 rounded-2xl bg-white p-4 text-sm font-medium shadow-card">
+              <input
+                type="checkbox"
+                checked={answers.remind}
+                onChange={(e) => set('remind', e.target.checked)}
+                className="size-5 shrink-0 accent-brand-600"
+              />
+              Send me a daily reminder at this time
+            </label>
+          )}
           <div className="rounded-2xl bg-white p-4 text-sm text-ink-soft shadow-card">
             <p className="font-semibold text-ink">Before you start</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -157,19 +190,22 @@ export function OnboardingPage() {
   const current = steps[step]!;
   const last = step === steps.length - 1;
 
-  function next() {
+  async function next() {
     if (!last) {
       setStep(step + 1);
       return;
     }
-    update.mutate({
+    const reminderTime = answers.reminderTime || null;
+    // Ask for notification permission now, while the reminder is what the user is looking at.
+    if (canNotify && answers.remind && reminderTime) await setDailyReminder(reminderTime).catch(() => undefined);
+    create.mutate({
+      name: answers.name,
       affectedHand: answers.affectedHand!,
       dominantHand: answers.dominantHand!,
       symptomDuration: answers.symptomDuration,
       postSurgery: answers.postSurgery!,
       goals: answers.goals,
-      reminderTime: answers.reminderTime || null,
-      onboarded: true,
+      reminderTime,
     });
   }
 
@@ -178,10 +214,9 @@ export function OnboardingPage() {
       <div className="flex items-center gap-3 px-5 pt-6">
         <button
           type="button"
-          onClick={() => setStep(step - 1)}
-          disabled={step === 0}
-          aria-label="Previous question"
-          className="grid size-10 place-items-center rounded-full bg-white shadow-card disabled:invisible"
+          onClick={() => (step === 0 ? navigate('/welcome') : setStep(step - 1))}
+          aria-label={step === 0 ? 'Back to welcome' : 'Previous question'}
+          className="grid size-10 place-items-center rounded-full bg-white shadow-card"
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -193,9 +228,9 @@ export function OnboardingPage() {
       </div>
 
       <div className="flex-1 px-5 pt-8">
-        {step === 0 && (
+        {step === 1 && (
           <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-brand-700">
-            <Sparkles className="size-4" aria-hidden /> Hi {user.name}, let's build your plan
+            <Sparkles className="size-4" aria-hidden /> Hi {answers.name.trim()}, let's build your plan
           </p>
         )}
         <h1 className="text-[26px] leading-tight font-extrabold tracking-tight text-balance">{current.title}</h1>
@@ -204,8 +239,8 @@ export function OnboardingPage() {
       </div>
 
       <div className="pb-safe sticky bottom-0 grid gap-3 bg-gradient-to-t from-sand-100 via-sand-100 px-5 pt-6">
-        <FormError error={update.error} />
-        <Button size="lg" block disabled={!current.ready} loading={update.isPending} onClick={next}>
+        <FormError error={create.error} />
+        <Button size="lg" block disabled={!current.ready} loading={create.isPending} onClick={next}>
           {last ? 'Start my plan' : 'Continue'}
         </Button>
       </div>

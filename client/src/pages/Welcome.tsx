@@ -1,4 +1,4 @@
-import { ChartLine, Flame, Hand, Waves } from 'lucide-react';
+import { ChartLine, Flame, Hand, ShieldCheck, Waves } from 'lucide-react';
 import { Link } from 'react-router';
 import { Frame } from '../components/AppShell';
 
@@ -53,20 +53,16 @@ export function WelcomePage() {
           Daily nerve and tendon glides, a timer that paces every hold, and a simple log that shows how your hand is
           really doing.
         </p>
-        <div className="mt-7 grid gap-3">
-          <Link
-            to="/register"
-            className="flex h-14 items-center justify-center rounded-2xl bg-brand-700 font-semibold text-white hover:bg-brand-800"
-          >
-            Get started
-          </Link>
-          <Link
-            to="/login"
-            className="flex h-14 items-center justify-center rounded-2xl font-semibold text-brand-700 ring-1 ring-brand-200 hover:bg-brand-50"
-          >
-            I already have an account
-          </Link>
-        </div>
+        <p className="mt-5 flex items-start gap-2.5 rounded-2xl bg-brand-50 p-3.5 text-sm text-brand-900">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+          No account needed. Everything you log stays on this phone, and you can export it as CSV at any time.
+        </p>
+        <Link
+          to="/onboarding"
+          className="mt-6 flex h-14 items-center justify-center rounded-2xl bg-brand-700 font-semibold text-white hover:bg-brand-800"
+        >
+          Get started
+        </Link>
         <p className="mt-6 text-center text-xs text-ink-faint">
           GripWise supports, but does not replace, care from your doctor or hand therapist.
         </p>

@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useChangePhase, useDashboard } from '../api/hooks';
-import type { Dashboard } from '../api/types';
+import { useChangePhase, useDashboard } from '../data/hooks';
+import type { Dashboard } from '../data/types';
 import { painTone } from '../components/PainScale';
 import { useToast } from '../components/Toast';
 import { Button, Card, ErrorState, ProgressBar, SectionTitle, Spinner } from '../components/ui';

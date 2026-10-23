@@ -5,11 +5,10 @@ dist/
 .env.*
 !.env.example
 
-# SQLite database files
-server/data/
-*.db
-*.db-wal
-*.db-shm
+# Android signing keys: never commit these (see README > Signing key)
+*.keystore
+*.keystore.b64
+*.jks
 
 .DS_Store
 coverage/

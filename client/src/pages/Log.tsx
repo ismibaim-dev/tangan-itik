@@ -1,6 +1,6 @@
 import { Minus, Moon, Plus, Trash2 } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
-import { useDeleteSymptomLog, useLogSymptoms, useSymptomLogs } from '../api/hooks';
+import { useDeleteSymptomLog, useLogSymptoms, useSymptomLogs } from '../data/hooks';
 import { PainScale } from '../components/PainScale';
 import { useToast } from '../components/Toast';
 import { Button, Card, ErrorState, Field, FormError, Input, PageHeader, SectionTitle, Spinner, Textarea } from '../components/ui';

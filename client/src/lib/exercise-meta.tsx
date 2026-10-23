@@ -1,6 +1,6 @@
 import { Activity, Dumbbell, Hand, Waves, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
-import type { ExerciseCategory, Phase } from '../api/types';
+import type { ExerciseCategory, Phase } from '../data/types';
 
 export const categoryMeta: Record<ExerciseCategory, { label: string; plural: string; tile: string; icon: ReactNode }> = {
   nerve_glide: {

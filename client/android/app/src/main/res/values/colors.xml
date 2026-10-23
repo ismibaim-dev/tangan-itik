@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Match the web app's tokens in client/src/styles.css. -->
+    <color name="gw_brand">#1B594D</color>
+    <color name="gw_surface">#F6F3ED</color>
+    <color name="gw_nav_bar">#FFFFFF</color>
+</resources>

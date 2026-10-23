@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import { ChevronLeft, TrendingDown, TrendingUp, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useQuestions, useSubmitAssessment } from '../api/hooks';
+import { useQuestions, useSubmitAssessment } from '../data/hooks';
 import { Frame } from '../components/AppShell';
-import { Button, ErrorState, FormError, ProgressBar, Spinner } from '../components/ui';
+import { Button, FormError, ProgressBar } from '../components/ui';
 
 export function WeeklyCheckPage() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export function WeeklyCheckPage() {
 
   if (submit.data) return <Result {...submit.data} />;
 
-  const list = questions.data ?? [];
+  const list = questions.data;
   const question = list[index];
   const answer = answers[index] ?? null;
   const last = index === list.length - 1;
@@ -45,8 +45,6 @@ export function WeeklyCheckPage() {
         </span>
       </div>
 
-      {questions.isPending && <Spinner />}
-      {questions.error && <ErrorState error={questions.error} onRetry={() => questions.refetch()} />}
       {question && (
         <div className="flex-1 px-5 pt-8">
           <p className="text-sm font-semibold text-violet-700">Weekly symptom check</p>

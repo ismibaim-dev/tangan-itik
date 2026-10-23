@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useReducer, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useRoutine, useSaveSession } from '../api/hooks';
-import type { Exercise, SessionExerciseInput, SessionResult } from '../api/types';
+import { useRoutine, useSaveSession } from '../data/hooks';
+import type { Exercise, SessionExerciseInput, SessionResult } from '../data/types';
 import { Frame } from '../components/AppShell';
 import { PainScale } from '../components/PainScale';
 import { Button, ErrorState, FormError, ProgressBar, Spinner, Textarea } from '../components/ui';

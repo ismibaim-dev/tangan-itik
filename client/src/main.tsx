@@ -12,12 +12,16 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
-    </QueryClientProvider>
-  </StrictMode>,
-);
+const root = document.getElementById('root')!;
+// index.html shows an "update your WebView" message instead when the browser engine is too old.
+if (!root.dataset.unsupported) {
+  createRoot(root).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+}

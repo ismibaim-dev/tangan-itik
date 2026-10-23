@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { Lock, Package, TriangleAlert } from 'lucide-react';
 import { useParams } from 'react-router';
-import { useExercise } from '../api/hooks';
+import { useExercise } from '../data/hooks';
 import { ErrorState, PageHeader, Spinner } from '../components/ui';
 import { categoryMeta, phaseNames } from '../lib/exercise-meta';
 
