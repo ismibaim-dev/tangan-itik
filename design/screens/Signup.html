@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Create account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:52px 20px 34px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:14px;min-height:44px">
+      <a href="Main{{ sfx }}.dc.html" aria-label="Back" style="width:44px;height:44px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M15 6l-6 6 6 6"/></svg></a>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:6px" aria-hidden="true">
+          <span style="flex:1;height:6px;border-radius:3px;background:var(--gold)"></span>
+          <span style="flex:1;height:6px;border-radius:3px;background:var(--border)"></span>
+          <span style="flex:1;height:6px;border-radius:3px;background:var(--border)"></span>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--text3)">Step 1 of 3 · Account</span>
+      </div>
+      <span style="width:44px;flex-shrink:0"></span>
+    </div>
+
+    <h1 style="margin:20px 0 6px;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-0.02em">Create your account</h1>
+    <p style="margin:0;font-size:15px;line-height:1.5;color:var(--text2)">Your sessions and progress are saved to your account, so nothing is lost if you change phones.</p>
+
+    <form style="margin-top:20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label for="su-name" style="font-size:13px;font-weight:600">Full name</label>
+        <input id="su-name" type="text" autocomplete="name" placeholder="Your name" value="{{ name }}" onChange="{{ setName }}" aria-invalid="{{ nameInvalid }}" aria-describedby="su-name-msg" style="height:52px;border-radius:16px;padding:0 16px;font-family:inherit;font-size:16px;box-sizing:border-box;background:var(--surface);color:var(--text);outline-color:var(--primary);{{ nameBorder }}">
+        <sc-if value="{{ nameShow }}" hint-placeholder-val="{{ false }}">
+          <p id="su-name-msg" style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>{{ nameErr }}</p>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label for="su-email" style="font-size:13px;font-weight:600">Email</label>
+        <input id="su-email" type="email" autocomplete="email" placeholder="you@example.com" value="{{ email }}" onChange="{{ setEmail }}" aria-invalid="{{ emailInvalid }}" aria-describedby="su-email-msg" style="height:52px;border-radius:16px;padding:0 16px;font-family:inherit;font-size:16px;box-sizing:border-box;background:var(--surface);color:var(--text);outline-color:var(--primary);{{ emailBorder }}">
+        <sc-if value="{{ emailShow }}" hint-placeholder-val="{{ false }}">
+          <p id="su-email-msg" style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>{{ emailErr }}</p>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label for="su-pw" style="font-size:13px;font-weight:600">Password</label>
+        <div style="position:relative">
+          <input id="su-pw" type="{{ pwType }}" autocomplete="new-password" placeholder="At least 8 characters" value="{{ pw }}" onChange="{{ setPw }}" aria-invalid="{{ pwInvalid }}" aria-describedby="su-pw-msg" style="width:100%;height:52px;border-radius:16px;padding:0 52px 0 16px;font-family:inherit;font-size:16px;box-sizing:border-box;background:var(--surface);color:var(--text);outline-color:var(--primary);{{ pwBorder }}">
+          <button type="button" onClick="{{ togglePw }}" aria-label="{{ pwAria }}" style="position:absolute;right:4px;top:4px;width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <sc-if value="{{ pwShow }}" hint-placeholder-val="{{ false }}">
+          <p id="su-pw-msg" style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>{{ pwErr }}</p>
+        </sc-if>
+        <sc-if value="{{ pwHint }}" hint-placeholder-val="{{ true }}">
+          <div id="su-pw-msg" style="display:flex;align-items:center;gap:10px">
+            <div style="display:flex;gap:4px;width:96px" aria-hidden="true">
+              <sc-for list="{{ segs }}" as="s" hint-placeholder-count="3"><span style="flex:1;height:4px;border-radius:2px;{{ s.style }}"></span></sc-for>
+            </div>
+            <span style="font-size:12px;color:var(--text3)">{{ strength }}</span>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="display:flex;align-items:flex-start;gap:12px;min-height:44px;cursor:pointer;font-size:13px;line-height:1.45;color:var(--text2)">
+          <input type="checkbox" checked="{{ consent }}" onChange="{{ toggleConsent }}" aria-invalid="{{ consentInvalid }}" style="width:22px;height:22px;margin:1px 0 0;accent-color:var(--primary);flex-shrink:0;cursor:pointer">
+          <span>I agree that Gripwise can store my exercise and symptom data to show my progress. I can delete it any time in Profile.</span>
+        </label>
+        <sc-if value="{{ consentShow }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>{{ consentErr }}</p>
+        </sc-if>
+      </div>
+    </form>
+
+    <sc-if value="{{ summaryShow }}" hint-placeholder-val="{{ false }}">
+      <p role="alert" style="margin:14px 0 0;border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;background:var(--dangerTint);color:var(--danger)">{{ summary }}</p>
+    </sc-if>
+
+    <div style="margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:6px">
+      <sc-if value="{{ valid }}" hint-placeholder-val="{{ false }}">
+        <a href="Pair{{ sfx }}.dc.html" style="height:56px;border-radius:28px;background:var(--primary);color:var(--onPrimary);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;text-decoration:none">Create account</a>
+      </sc-if>
+      <sc-if value="{{ invalid }}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{ tryCreate }}" style="height:56px;border-radius:28px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-weight:700;font-size:16px;cursor:pointer">Create account</button>
+      </sc-if>
+      <p style="margin:0;text-align:center;font-size:14px;color:var(--text2)">Already have an account? <a href="Login{{ sfx }}.dc.html" style="display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:none;color:var(--link)">Sign in</a></p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"preview":{"editor":"enum","options":["Empty","Errors"],"default":"Empty"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  renderVals() {
+    const g = this.gw();
+    const st = this.state || {};
+    const pre = this.props.preview === 'Errors';
+    const pick = (k, d) => (st[k] !== undefined ? st[k] : d);
+    const v = { name: pick('name', ''), email: pick('email', pre ? 'aisyah@' : ''), pw: pick('pw', pre ? '1234' : ''), consent: pick('consent', false) };
+    const tried = !!st.tried || pre;
+    const err = {
+      name: v.name.trim().length < 2 ? 'Enter your name.' : '',
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim()) ? '' : (v.email ? 'Check your email, for example name@example.com.' : 'Enter your email.'),
+      pw: v.pw.length >= 8 ? '' : 'Use at least 8 characters.',
+      consent: v.consent ? '' : 'Please agree so we can save your progress.'
+    };
+    const bad = Object.keys(err).filter((k) => err[k]);
+    const show = (k) => tried && !!err[k];
+    const border = (k) => 'border:1.5px solid ' + (show(k) ? 'var(--danger)' : 'var(--border)');
+    const len = v.pw.length;
+    const score = len === 0 ? 0 : len < 8 ? 1 : (len >= 12 && /\d/.test(v.pw) && /[A-Za-z]/.test(v.pw) ? 3 : 2);
+    const fill = ['var(--border)', 'var(--amberFill)', 'var(--primary)', 'var(--greenText)'][score];
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      name: v.name, email: v.email, pw: v.pw, consent: v.consent,
+      setName: (e) => this.setState({ name: e.target.value }),
+      setEmail: (e) => this.setState({ email: e.target.value }),
+      setPw: (e) => this.setState({ pw: e.target.value }),
+      toggleConsent: () => this.setState({ consent: !v.consent }),
+      togglePw: () => this.setState({ showPw: !st.showPw }),
+      pwType: st.showPw ? 'text' : 'password',
+      pwAria: st.showPw ? 'Hide password' : 'Show password',
+      nameShow: show('name'), nameErr: err.name, nameBorder: border('name'), nameInvalid: String(show('name')),
+      emailShow: show('email'), emailErr: err.email, emailBorder: border('email'), emailInvalid: String(show('email')),
+      pwShow: show('pw'), pwHint: !show('pw'), pwErr: err.pw, pwBorder: border('pw'), pwInvalid: String(show('pw')),
+      consentShow: show('consent'), consentErr: err.consent, consentInvalid: String(show('consent')),
+      segs: [1, 2, 3].map((k) => ({ style: 'background:' + (k <= score ? fill : 'var(--border)') })),
+      strength: ['Use at least 8 characters', 'Too short', 'Good password', 'Strong password'][score],
+      summaryShow: tried && bad.length > 0,
+      summary: bad.length === 1 ? 'Fix the highlighted field to continue.' : 'Fix the ' + bad.length + ' highlighted fields to continue.',
+      valid: bad.length === 0, invalid: bad.length > 0,
+      tryCreate: () => this.setState({ tried: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

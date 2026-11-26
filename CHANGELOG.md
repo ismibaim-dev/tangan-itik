@@ -1,7 +1,36 @@
 # Changelog
 
-All notable changes to GripWise are listed here. Versions follow [semantic versioning](https://semver.org/).
+All notable changes to Gripwise are listed here. Versions follow [semantic versioning](https://semver.org/).
 The release workflow publishes each version's section below as its GitHub release notes.
+
+## [3.0.0] - 2026-11-26
+
+Gripwise is rebuilt as a native Android app that connects to the Gripwise smart glove over Bluetooth and guides each exercise hands-free.
+
+### Added
+
+- **Glove connection:** finds "Gripwise_Glove" among paired devices or by scanning, connects over Classic Bluetooth (SPP), and reconnects by itself if the link drops. It reads both firmware output formats (readable and CSV), so the glove firmware stays unchanged.
+- **Hand calibration:** three 3-second holds (open hand, gentle fist, wrist flat) turn the raw sensor values into 0–100 % bend per finger and a wrist angle. Each hold can be redone, and the app flags a sensor that barely moves.
+- **Hands-free sessions:** live bend bars and a wrist tilt meter, a hold timer that counts down only while every target is in range, short slips forgiven, then on to the next step automatically. Corrective hints, pause, back and skip, a sound and vibration cue, and the screen stays on.
+- **Disconnect handling:** the timer pauses when the glove drops out, with a banner and a Reconnect button.
+- **Symptom log:** "Felt tingling or pain" stops the set and saves what you felt to the session.
+- **8 exercises:** tendon glides, wrist tilts, median nerve glide, grip and release, wrist flexor and extensor stretches, thumb bend and stretch, single finger bends.
+- **Home:** a daily check-in (great, okay, stiff, sore, tingly) and today's morning, afternoon and evening plan with reminder times.
+- **Progress:** week and month views of reps, active days, change from the last period, best bend per finger and tingling reports.
+- **Export:** CSV (sessions, daily totals, check-ins and symptoms, raw sensor data) or a PDF report, saved to the phone or shared.
+- **Reminders:** a notification for each part of the daily plan, kept after a restart.
+- **Demo glove:** simulated readings so every screen can be tried without the hardware.
+- **Light, dark (black) and system themes.**
+
+### Changed
+
+- Rewritten in Kotlin with Jetpack Compose (Android 8.0 or newer). Data is stored on the phone with Room and DataStore; the app has no internet permission.
+- A local profile (first name and consent) replaces accounts for now.
+- CI runs the unit tests, including a Robolectric walk-through of the whole app with the demo glove, and builds a debug APK for every change.
+
+### Upgrading from 2.0.0
+
+Version 2.0.0 was signed with a temporary key, so Android won't install 3.0.0 over it. Uninstall the old app first. Data from 2.0.0 is not carried over.
 
 ## [2.0.0] - 2026-10-23
 

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:52px 20px 20px;display:flex;flex-direction:column">
+    <div style="font-size:13px;font-weight:500;color:var(--text3)">Thursday, 26 November</div>
+    <h1 style="margin:4px 0 0;font-size:24px;line-height:1.2;font-weight:800;letter-spacing:-0.02em">Good afternoon, Aisyah</h1>
+
+    <a href="GloveSettings{{ sfx }}.dc.html" style="align-self:flex-start;margin-top:12px;min-height:44px;padding:0 14px 0 12px;border-radius:22px;background:var(--surface);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--primary)"></span>Glove connected · 82%
+      <span style="color:var(--text3)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+
+    <section style="margin-top:16px;background:var(--surface);border-radius:24px;padding:16px">
+      <h2 style="margin:0;font-size:16px;font-weight:700">How do your wrists feel today?</h2>
+      <div style="margin-top:14px;display:flex;justify-content:space-between" role="group" aria-label="Wrist comfort">
+        <sc-for list="{{ moods }}" as="item" hint-placeholder-count="5">
+          <button type="button" onClick="{{ item.pick }}" aria-pressed="{{ item.pressed }}" style="width:58px;min-height:72px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit">
+            <span style="width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;{{ item.tileStyle }}">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="9" cy="10" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1.1" fill="currentColor" stroke="none"/><path d="{{ item.mouth }}"/></svg>
+            </span>
+            <span style="font-size:12px;{{ item.labelStyle }}">{{ item.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <p style="margin:12px 0 0;font-size:13px;line-height:1.4;color:var(--text2)">{{ moodNote }}</p>
+    </section>
+
+    <div style="margin-top:18px;display:flex;align-items:baseline;justify-content:space-between">
+      <h2 style="margin:0;font-size:18px;font-weight:700">Today's plan</h2>
+      <span style="font-size:13px;font-weight:600;color:var(--text2)">1 of 3 done</span>
+    </div>
+
+    <ol style="list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px">
+      <li style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Morning · 9:12 am</div>
+        <a href="Review{{ sfx }}.dc.html" style="min-height:80px;border-radius:20px;background:var(--tintGreen);display:flex;align-items:center;gap:12px;padding:12px 10px 12px 14px;box-sizing:border-box;text-decoration:none;color:var(--text)">
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:700">Wrist tilts</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">10 reps · 3 min · view summary</div>
+          </div>
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--greenText)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5.5-5.5"/></svg>Done</span>
+          <span style="color:var(--text3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 6l6 6-6 6"/></svg></span>
+        </a>
+      </li>
+      <li style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--link)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Afternoon · up next</div>
+        <a href="Session{{ sfx }}.dc.html" style="min-height:88px;border-radius:20px;background:var(--tintBlue);display:flex;align-items:center;gap:12px;padding:12px 10px 12px 14px;box-sizing:border-box;text-decoration:none;color:var(--text)">
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:700">Tendon glides</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">5 poses · 10 reps · 6 min</div>
+            <span style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:16px;background:var(--primary);color:var(--onPrimary);font-size:12px;font-weight:700"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M8 5.5v13l10.5-6.5z"/></svg>Start session</span>
+          </div>
+          <div style="width:64px;height:68px;border-radius:16px;background:var(--surface);display:flex;align-items:center;justify-content:center">
+            <svg width="40" height="50" viewBox="0 0 80 100" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 57V86" style="stroke:var(--navy)" stroke-width="18"/><path d="M28 52V30L41 32L39 42" stroke="#2563EB" stroke-width="10"/></svg>
+          </div>
+        </a>
+      </li>
+      <li style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Evening</div>
+        <button type="button" onClick="{{ openEvening }}" aria-haspopup="dialog" style="min-height:80px;border:0;border-radius:20px;background:var(--tintAmber);display:flex;align-items:center;gap:12px;padding:12px 10px 12px 14px;text-align:left;font-family:inherit;color:var(--text);cursor:pointer">
+          <span style="flex:1">
+            <span style="display:block;font-size:15px;font-weight:700">Median nerve glide</span>
+            <span style="display:block;font-size:12px;color:var(--text2);margin-top:2px">6 reps · 4 min · start early or change time</span>
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--amberText)">{{ reminderLabel }}</span>
+          <span style="color:var(--text3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
+      </li>
+    </ol>
+  </div>
+
+  <nav aria-label="Main" style="flex-shrink:0;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -6px 20px var(--shadow);display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));padding:8px 12px 30px">
+    <a href="Home{{ sfx }}.dc.html" aria-current="page" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:700;color:var(--link)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="Exercises{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Exercises</a>
+    <a href="Progress{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>Progress</a>
+    <a href="Settings{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>Profile</a>
+  </nav>
+
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end">
+      <button type="button" onClick="{{ closeSheet }}" aria-label="Close" style="position:absolute;inset:0;border:0;background:var(--scrim);cursor:pointer"></button>
+      <div role="dialog" aria-modal="true" aria-labelledby="eve-title" style="position:relative;background:var(--surface);border-radius:28px 28px 0 0;padding:12px 20px 34px;display:flex;flex-direction:column;gap:14px">
+        <span style="align-self:center;width:40px;height:5px;border-radius:3px;background:var(--border)"></span>
+        <div>
+          <h2 id="eve-title" style="margin:0;font-size:20px;font-weight:800">Median nerve glide</h2>
+          <p style="margin:4px 0 0;font-size:14px;color:var(--text2)">Planned for this evening · 6 reps · about 4 min</p>
+        </div>
+        <a href="SessionNerveGlide{{ sfx }}.dc.html" style="height:56px;border-radius:28px;background:var(--primary);color:var(--onPrimary);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M8 5.5v13l10.5-6.5z"/></svg>Start now</a>
+        <h3 style="margin:4px 0 0;font-size:13px;font-weight:700;color:var(--text2)">Reminder time</h3>
+        <div role="group" aria-label="Reminder time" style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:8px">
+          <sc-for list="{{ times }}" as="t" hint-placeholder-count="4">
+            <button type="button" onClick="{{ t.pick }}" aria-pressed="{{ t.pressed }}" style="min-height:48px;border-radius:14px;font-family:inherit;font-size:14px;cursor:pointer;{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <button type="button" onClick="{{ closeSheet }}" style="min-height:48px;border-radius:24px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">Done</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"preview":{"editor":"enum","options":["None","Evening sheet"],"default":"None"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  renderVals() {
+    const g = this.gw();
+    const st = this.state || {};
+    const sel = st.mood || 'okay';
+    const sheet = st.sheet !== undefined ? st.sheet : this.props.preview === 'Evening sheet';
+    const time = st.time || '8:00 pm';
+    const moods = [
+      { id: 'great', label: 'Great', mouth: 'M8 13.8c1.1 1.9 2.4 2.8 4 2.8s2.9-.9 4-2.8' },
+      { id: 'okay', label: 'Okay', mouth: 'M8.5 14.8c1 .8 2.2 1.2 3.5 1.2s2.5-.4 3.5-1.2' },
+      { id: 'stiff', label: 'Stiff', mouth: 'M8.5 15.3h7' },
+      { id: 'sore', label: 'Sore', mouth: 'M8.5 16.4c1-.9 2.2-1.3 3.5-1.3s2.5.4 3.5 1.3' },
+      { id: 'tingly', label: 'Tingly', mouth: 'M7.8 15.4l1.4-1.1 1.4 1.1 1.4-1.1 1.4 1.1 1.4-1.1 1.4 1.1' }
+    ];
+    const notes = {
+      great: 'Nice. Your plan stays as it is today.',
+      okay: 'Thanks for checking in. Your plan stays as it is.',
+      stiff: 'Noted. We added a slow warm-up before each session.',
+      sore: 'Noted. Reps are reduced today. Stop if it hurts.',
+      tingly: 'Noted. Sessions are lighter today. Tell your physio if it keeps happening.'
+    };
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      moodNote: notes[sel],
+      moods: moods.map((m) => {
+        const on = m.id === sel;
+        const warm = m.id === 'tingly' || m.id === 'sore';
+        return Object.assign({}, m, {
+          pressed: String(on),
+          tileStyle: on ? (warm ? 'background:var(--amberFill);color:#FFFFFF' : 'background:var(--primary);color:var(--onPrimary)') : 'background:var(--surface2);color:var(--navy)',
+          labelStyle: on ? 'font-weight:700;color:var(--text)' : 'font-weight:500;color:var(--text2)',
+          pick: () => this.setState({ mood: m.id })
+        });
+      }),
+      reminderLabel: time === 'Off' ? 'No reminder' : 'Reminder ' + time,
+      sheetOpen: !!sheet,
+      openEvening: () => this.setState({ sheet: true }),
+      closeSheet: () => this.setState({ sheet: false }),
+      times: ['7:00 pm', '8:00 pm', '9:00 pm', 'Off'].map((t) => ({
+        label: t, pressed: String(t === time),
+        style: t === time ? 'border:2px solid var(--primary);background:var(--tintBlue);color:var(--accentText);font-weight:700' : 'border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-weight:600',
+        pick: () => this.setState({ time: t })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

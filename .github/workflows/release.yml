@@ -1,8 +1,8 @@
 name: Release
 
-# Pushing a version tag (for example v2.0.0), or publishing a release from the web UI, checks the
-# code again, builds the Android APK and attaches it to the GitHub release. The notes come from
-# that version's section of CHANGELOG.md.
+# Pushing a version tag (for example v3.0.0), or publishing a release from the web UI, tests the
+# code, builds the Android APK and attaches it to the GitHub release. The notes come from that
+# version's section of CHANGELOG.md.
 on:
   push:
     tags: ['v*']
@@ -13,20 +13,14 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: npm
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
-          cache: gradle
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Work out the version
         id: version
@@ -50,13 +44,10 @@ jobs:
             exit 1
           fi
 
-      - name: Build the web app into the Android project
-        env:
-          APP_VERSION: ${{ steps.version.outputs.name }}
-        run: npm run android:sync
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest -PskipFlowTest --no-daemon
 
       - name: Build the APK
-        working-directory: client/android
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -68,19 +59,17 @@ jobs:
           if [ -n "$KEYSTORE_BASE64" ]; then
             export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
             echo "$KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
-            ./gradlew assembleRelease --no-daemon $versions
-            cp app/build/outputs/apk/release/app-release.apk "$apk"
           else
-            # Without a signing key, ship a debug-signed APK so the release is still installable,
-            # and say so in the notes: updating it later means reinstalling.
-            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret; attaching a debug-signed APK"
-            ./gradlew assembleDebug --no-daemon $versions
-            cp app/build/outputs/apk/debug/app-debug.apk "$apk"
-            cat >> "$GITHUB_WORKSPACE/release-notes.md" <<'NOTE'
+            # No signing secrets: the release build falls back to the repo's public debug key,
+            # which stays the same from one release to the next, so updates still install.
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret; the APK is signed with the repo's debug key"
+            cat >> release-notes.md <<'NOTE'
 
-          > **Note:** this APK is signed with a temporary debug key. Android won't install a later version over it, so before updating, export your data from Profile > Your data, then uninstall and install the new APK.
+          > **Signing:** this APK is signed with the project's public debug key (no release key is set up yet). Later releases signed the same way install over it.
           NOTE
           fi
+          ./gradlew assembleRelease --no-daemon $versions
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
           cd "$GITHUB_WORKSPACE" && sha256sum "$(basename "$apk")" > "$apk.sha256"
 
       - name: Publish GitHub release
@@ -92,6 +81,6 @@ jobs:
             # keep that release and replace its notes with the changelog section.
             gh release edit "$GITHUB_REF_NAME" --notes-file release-notes.md
           else
-            gh release create "$GITHUB_REF_NAME" --verify-tag --title "GripWise $GITHUB_REF_NAME" --notes-file release-notes.md
+            gh release create "$GITHUB_REF_NAME" --verify-tag --title "Gripwise $GITHUB_REF_NAME" --notes-file release-notes.md
           fi
           gh release upload "$GITHUB_REF_NAME" "gripwise-$GITHUB_REF_NAME.apk" "gripwise-$GITHUB_REF_NAME.apk.sha256" --clobber

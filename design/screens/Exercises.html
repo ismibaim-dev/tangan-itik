@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Exercises</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:52px 20px 20px;display:flex;flex-direction:column">
+    <h1 style="margin:0;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-0.02em">Exercises</h1>
+    <p style="margin:4px 0 0;font-size:14px;color:var(--text2)">Picked for carpal tunnel relief</p>
+
+    <div role="note" style="margin-top:14px;display:flex;gap:10px;align-items:flex-start;background:var(--tintYellow);border-radius:18px;padding:12px 14px">
+      <span style="color:var(--yellowIcon);margin-top:1px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg></span>
+      <p style="margin:0;font-size:13px;line-height:1.45">Move slowly and stay pain-free. Stop if numbness or tingling gets worse.</p>
+    </div>
+
+    <div role="group" aria-label="Exercise view" style="margin-top:14px;height:48px;border-radius:24px;background:var(--surface2);padding:4px;box-sizing:border-box;display:flex">
+      <button type="button" onClick="{{ showRoutines }}" aria-pressed="{{ routinesPressed }}" style="flex:1;border:0;border-radius:20px;font-family:inherit;font-size:14px;cursor:pointer;{{ routinesStyle }}">Routines</button>
+      <button type="button" onClick="{{ showSingles }}" aria-pressed="{{ singlesPressed }}" style="flex:1;border:0;border-radius:20px;font-family:inherit;font-size:14px;cursor:pointer;{{ singlesStyle }}">Single moves</button>
+    </div>
+
+    <ul style="list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+        <li>
+          <a href="{{ it.href }}" style="min-height:104px;box-sizing:border-box;border-radius:22px;background:var(--surface);padding:12px;display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text)">
+            <div style="width:80px;height:80px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;{{ it.tile }}">
+              <svg width="56" height="56" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="{{ it.p0 }}" stroke="currentColor" stroke-width="{{ it.w0 }}"/>
+                <path d="{{ it.p1 }}" stroke="currentColor" stroke-width="9"/>
+                <path d="{{ it.p2 }}" stroke="#2563EB" stroke-width="{{ it.w2 }}"/>
+                <path d="{{ it.p3 }}" style="stroke:var(--pale)" stroke-width="12"/>
+              </svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <span style="display:inline-block;font-size:11px;font-weight:700;border-radius:10px;padding:3px 8px;{{ it.tag }}">{{ it.tagText }}</span>
+              <div style="font-size:16px;font-weight:700;margin-top:6px">{{ it.name }}</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:2px">{{ it.meta }}</div>
+            </div>
+            <span style="color:var(--text3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 6l6 6-6 6"/></svg></span>
+          </a>
+        </li>
+      </sc-for>
+    </ul>
+  </div>
+
+  <nav aria-label="Main" style="flex-shrink:0;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -6px 20px var(--shadow);display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));padding:8px 12px 30px">
+    <a href="Home{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="Exercises{{ sfx }}.dc.html" aria-current="page" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:700;color:var(--link)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Exercises</a>
+    <a href="Progress{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>Progress</a>
+    <a href="Settings{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>Profile</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  renderVals() {
+    const g = this.gw();
+    const tab = (this.state && this.state.tab) || 'routines';
+    const on = 'background:var(--raised);font-weight:700;color:var(--text);box-shadow:0 2px 6px var(--shadow)';
+    const off = 'background:transparent;font-weight:600;color:var(--text2)';
+    const tint = {
+      blue: ['background:var(--tintBlue);color:var(--navy)', 'color:var(--accentText);background:var(--tintBlue)'],
+      green: ['background:var(--tintGreen);color:var(--greenText)', 'color:var(--greenText);background:var(--tintGreen)'],
+      amber: ['background:var(--tintAmber);color:var(--amberText)', 'color:var(--amberText);background:var(--tintAmber)'],
+      violet: ['background:var(--tintViolet);color:var(--violetText)', 'color:var(--violetText);background:var(--tintViolet)']
+    };
+    const hand = 'M50 62V80', fingers = 'M38 50V20M47 50V14M56 50V18M64 50V28';
+    const mk = (file, name, meta, tagText, t, p0, w0, p1, p2, w2, p3) => ({
+      href: file + g.sfx + '.dc.html', name: name, meta: meta, tagText: tagText, tile: tint[t][0], tag: tint[t][1],
+      p0: p0, w0: w0, p1: p1 || 'M0 0', p2: p2 || 'M0 0', w2: w2 || 10, p3: p3 || 'M0 0'
+    });
+    const routines = [
+      mk('Session', 'Tendon glides', '5 steps · 6 min', 'Tracks fingers', 'blue', 'M33 57V86', 18, '', 'M38 52V30L51 32L49 42', 10),
+      mk('SessionWristTilts', 'Wrist tilts', '3 steps · 3 min', 'Tracks wrist', 'green', 'M8 62H44', 16, '', 'M48 62L72.5 41.4', 12),
+      mk('SessionNerveGlide', 'Median nerve glide', '6 steps · 4 min', 'Fingers + wrist', 'amber', hand, 34, fingers, 'M36 76L11 64', 10),
+      mk('SessionGrip', 'Grip and release', '2 steps · 10 reps', 'Tracks fingers', 'violet', 'M33 57V86', 18, '', 'M38 52H58V65H48', 10)
+    ];
+    const singles = [
+      mk('SessionFlexor', 'Wrist flexor stretch', 'Palm up · hold 15 s', 'Tracks wrist', 'green', 'M8 62H44', 16, '', 'M48 62L66.4 88.2', 12, 'M71 84L77 93'),
+      mk('SessionExtensor', 'Wrist extensor stretch', 'Palm down · hold 15 s', 'Tracks wrist', 'violet', 'M8 62H44', 16, '', 'M48 62L66.4 88.2', 12, 'M63 70L69 64'),
+      mk('SessionThumb', 'Thumb bend and stretch', '2 steps · 5 rounds', 'Tracks thumb', 'amber', hand, 34, fingers, 'M38 78L58 70', 10),
+      mk('SessionFingerBends', 'Single finger bends', '3 steps · 5 rounds', 'Tracks fingers', 'blue', hand, 34, 'M47 50V14M56 50V18M64 50V28M36 76L22 58', 'M38 50V40', 9)
+    ];
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      items: tab === 'routines' ? routines : singles,
+      routinesPressed: String(tab === 'routines'), singlesPressed: String(tab === 'singles'),
+      routinesStyle: tab === 'routines' ? on : off, singlesStyle: tab === 'singles' ? on : off,
+      showRoutines: () => this.setState({ tab: 'routines' }),
+      showSingles: () => this.setState({ tab: 'singles' })
+    };
+  }
+}
+</script>
+</body>
+</html>

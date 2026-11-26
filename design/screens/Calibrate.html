@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Calibrate hand</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:52px 20px 34px;display:flex;flex-direction:column">
+    <sc-if value="{{ onboarding }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:14px;min-height:44px">
+        <a href="Pair{{ sfx }}.dc.html" aria-label="Back" style="width:44px;height:44px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M15 6l-6 6 6 6"/></svg></a>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;gap:6px" aria-hidden="true">
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--gold)"></span>
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--gold)"></span>
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--gold)"></span>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:var(--text3)">Step 3 of 3 · Calibrate</span>
+        </div>
+        <span style="width:44px;flex-shrink:0"></span>
+      </div>
+      <h1 style="margin:20px 0 6px;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-0.02em">Calibrate your hand</h1>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.5;color:var(--text2)">Hold each position for 3 seconds so Gripwise learns what 0% and 100% bend look like for you.</p>
+    </sc-if>
+
+    <sc-if value="{{ settings }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:12px;min-height:44px">
+        <a href="Settings{{ sfx }}.dc.html" aria-label="Back to profile" style="width:44px;height:44px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M15 6l-6 6 6 6"/></svg></a>
+        <h1 style="flex:1;margin:0;font-size:20px;font-weight:800">Glove &amp; calibration</h1>
+      </div>
+      <section style="margin-top:16px;background:var(--surface);border-radius:22px;padding:14px;display:flex;align-items:center;gap:12px">
+        <div style="width:48px;height:48px;border-radius:14px;background:var(--tintBlue);display:flex;align-items:center;justify-content:center;color:var(--link);flex-shrink:0"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M8 20v-4.5L5.2 12a1.6 1.6 0 0 1 2.5-2L9 11.3V5a1.4 1.4 0 0 1 2.8 0v5V3.8a1.4 1.4 0 0 1 2.8 0V10V5a1.4 1.4 0 0 1 2.8 0v5.5V8a1.4 1.4 0 0 1 2.8 0v6.5A5.5 5.5 0 0 1 14.7 20z"/><path d="M8 20h7"/></svg></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:700">Gripwise_Glove</div>
+          <div style="font-size:13px;color:var(--text2)">Connected · battery 82% · 5 sensors OK</div>
+        </div>
+      </section>
+      <h2 style="margin:18px 0 8px;font-size:13px;font-weight:700;color:var(--text2)">Hand calibration · last saved today, 2:04 pm</h2>
+    </sc-if>
+
+    <section style="background:var(--surface);border-radius:24px;padding:8px 12px">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:8px;padding:10px 4px;{{ s.rowStyle }}">
+          <div style="display:flex;align-items:center;gap:12px;min-height:52px">
+            <div style="width:44px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;{{ s.tileStyle }}">
+              <svg width="30" height="36" viewBox="0 0 80 100" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="{{ s.palm }}" stroke="currentColor" stroke-width="18"/><path d="{{ s.finger }}" stroke="currentColor" stroke-width="10"/></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:700">{{ s.name }}</div>
+              <div style="font-size:12px;{{ s.subStyle }}">{{ s.sub }}</div>
+            </div>
+            <sc-if value="{{ s.isDone }}" hint-placeholder-val="{{ false }}">
+              <span style="display:flex;align-items:center;gap:4px">
+                <span style="color:var(--greenText)" aria-label="Saved"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5.5-5.5"/></svg></span>
+                <button type="button" onClick="{{ s.redo }}" disabled="{{ busy }}" aria-label="Redo: {{ s.name }}" style="min-width:56px;height:44px;border-radius:22px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Redo</button>
+              </span>
+            </sc-if>
+            <sc-if value="{{ s.isActive }}" hint-placeholder-val="{{ false }}">
+              <svg width="44" height="44" viewBox="0 0 40 40" role="img" aria-label="{{ s.left }} seconds left"><circle cx="20" cy="20" r="16" fill="none" style="stroke:var(--ringTrack)" stroke-width="4"/><circle cx="20" cy="20" r="16" fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ s.dash }}" stroke-opacity="{{ s.dashOpacity }}" transform="rotate(-90 20 20)"/><text x="20" y="24.5" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--text)" font-family="Plus Jakarta Sans, sans-serif">{{ s.left }}s</text></svg>
+            </sc-if>
+            <sc-if value="{{ s.isPending }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:12px;font-weight:600;color:var(--text3)">Next</span>
+            </sc-if>
+          </div>
+          <sc-if value="{{ s.isActive }}" hint-placeholder-val="{{ false }}">
+            <div style="height:6px;border-radius:3px;background:var(--ringTrack);overflow:hidden" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="{{ s.held }}" aria-label="Hold progress"><div style="height:6px;border-radius:3px;background:var(--primary);{{ s.barStyle }}"></div></div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </section>
+
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="margin-top:14px;display:flex;gap:10px;align-items:flex-start;border-radius:16px;padding:12px 14px;background:var(--tintGreen);color:var(--greenText)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5.5-5.5"/></svg>
+        <p style="margin:0;font-size:13px;line-height:1.45;font-weight:600">Calibration saved. Gripwise now knows your hand's full range.</p>
+      </div>
+    </sc-if>
+
+    <div style="margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:8px">
+      <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ startAll }}" style="height:56px;border-radius:28px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-weight:700;font-size:16px;cursor:pointer">Start calibration</button>
+      </sc-if>
+      <sc-if value="{{ busy }}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{ cancel }}" style="height:56px;border-radius:28px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-weight:700;font-size:16px;cursor:pointer">Stop calibration</button>
+      </sc-if>
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <a href="{{ doneHref }}" style="height:56px;border-radius:28px;background:var(--primary);color:var(--onPrimary);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;text-decoration:none">{{ doneLabel }}</a>
+        <button type="button" onClick="{{ startAll }}" style="min-height:48px;border:0;background:transparent;color:var(--link);font-family:inherit;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Recalibrate all</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"context":{"editor":"enum","options":["Onboarding","Settings"],"default":"Onboarding"},"preview":{"editor":"enum","options":["In progress","Not started","Complete"],"default":"In progress"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  S() {
+    const st = this.state || {};
+    if (st.phase) return st;
+    const p = this.props.preview || 'In progress';
+    if (p === 'Not started') return { phase: 'idle', step: 0, left: 3, done: [false, false, false] };
+    if (p === 'Complete') return { phase: 'done', step: 3, left: 3, done: [true, true, true] };
+    return { phase: 'running', step: 1, left: 2, done: [true, false, false] };
+  }
+  componentDidMount() {
+    if (this.props.autoplay && this.S().phase === 'running') this.run();
+  }
+  componentWillUnmount() {
+    clearInterval(this.iv);
+  }
+  run() {
+    clearInterval(this.iv);
+    this.iv = setInterval(() => this.tick(), 1000);
+  }
+  tick() {
+    const s = this.S();
+    if (s.phase !== 'running') { clearInterval(this.iv); return; }
+    if (s.left > 1) { this.setState(Object.assign({}, s, { left: s.left - 1 })); return; }
+    const done = s.done.slice();
+    done[s.step] = true;
+    const next = s.only ? -1 : done.indexOf(false);
+    if (next === -1) { clearInterval(this.iv); this.setState({ phase: 'done', step: 3, left: 3, done: done, only: false }); return; }
+    this.setState({ phase: 'running', step: next, left: 3, done: done, only: false });
+  }
+  renderVals() {
+    const g = this.gw();
+    const s = this.S();
+    const settings = this.props.context === 'Settings';
+    const defs = [
+      { name: 'Open hand, fingers straight', saved: 'Saved as 0% bend', hint: 'Fingers straight, hand relaxed', palm: 'M23 57V86', finger: 'M28 52V8' },
+      { name: 'Make a gentle fist', saved: 'Saved as 100% bend', hint: 'Curl in fully, no need to squeeze', palm: 'M23 57V86', finger: 'M28 52H48V65H38' },
+      { name: 'Rest your wrist flat', saved: 'Saved as your neutral angle', hint: 'Forearm and hand level on a table', palm: 'M8 62H44', finger: 'M44 62H72' }
+    ];
+    const busy = s.phase === 'running';
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      onboarding: !settings, settings: settings,
+      busy: busy, isIdle: s.phase === 'idle', isDone: s.phase === 'done',
+      steps: defs.map((d, k) => {
+        const active = busy && s.step === k;
+        const isDone = s.done[k] && !active;
+        const held = 3 - s.left;
+        return {
+          name: d.name, palm: d.palm, finger: d.finger,
+          isDone: isDone, isActive: active, isPending: !isDone && !active,
+          sub: active ? 'Hold still · ' + d.hint : (isDone ? d.saved : d.hint),
+          subStyle: active ? 'color:var(--accentText);font-weight:600' : 'color:var(--text3)',
+          tileStyle: active ? 'background:var(--tintBlue);color:var(--link)' : (isDone ? 'background:var(--tintGreen);color:var(--greenText)' : 'background:var(--surface2);color:var(--text3)'),
+          rowStyle: (k > 0 ? 'border-top:1px solid var(--line);' : '') + (active ? 'margin:0 -8px;padding-left:12px;padding-right:12px;border-radius:16px;background:var(--tintBlue);border-top-color:transparent' : ''),
+          left: s.left, held: held,
+          dash: Math.round(held / 3 * 101) + ' 101',
+          dashOpacity: held > 0 ? 1 : 0,
+          barStyle: 'width:' + Math.round(held / 3 * 100) + '%',
+          redo: () => { this.setState({ phase: 'running', step: k, left: 3, done: s.done, only: true }); this.run(); }
+        };
+      }),
+      startAll: () => { this.setState({ phase: 'running', step: 0, left: 3, done: [false, false, false], only: false }); this.run(); },
+      cancel: () => { clearInterval(this.iv); this.setState({ phase: s.done.every(Boolean) ? 'done' : 'idle', step: 0, left: 3, done: s.done, only: false }); },
+      doneHref: settings ? 'Settings' + g.sfx + '.dc.html' : 'Home' + g.sfx + '.dc.html',
+      doneLabel: settings ? 'Done' : 'Finish setup'
+    };
+  }
+}
+</script>
+</body>
+</html>

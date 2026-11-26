@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Live session</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex-shrink:0;padding:52px 20px 0">
+    <div style="display:flex;align-items:center;gap:12px;min-height:44px">
+      <button type="button" onClick="{{ askExit }}" aria-label="End session" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div style="flex:1;min-width:0;text-align:center">
+        <div style="font-size:16px;font-weight:700">{{ exName }}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:500;color:var(--text3)"><span style="width:7px;height:7px;border-radius:50%;{{ liveDot }}"></span>{{ roundText }} · {{ liveText }}</div>
+      </div>
+      <button type="button" onClick="{{ toggleCue }}" aria-pressed="{{ cuePressed }}" aria-label="Sound and vibration cues" style="width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;{{ cueColor }}">
+        <sc-if value="{{ cueOn }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></sc-if>
+        <sc-if value="{{ cueOff }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></sc-if>
+      </button>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:6px" aria-label="Step {{ stepNum }} of {{ stepCount }}">
+      <sc-for list="{{ segments }}" as="sg" hint-placeholder-count="5"><span style="flex:1;height:6px;border-radius:3px;{{ sg.style }}"></span></sc-for>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:12px">
+    <sc-if value="{{ disc }}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="border-radius:18px;padding:12px 14px;background:var(--tintAmber);color:var(--amberText);display:flex;align-items:center;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">Glove disconnected</div><div style="font-size:12px;font-weight:500">Timer paused. Check the glove is on and nearby.</div></div>
+        <sc-if value="{{ canReconnect }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ reconnect }}" style="min-height:44px;padding:0 14px;border-radius:22px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Reconnect</button>
+        </sc-if>
+        <sc-if value="{{ reconnecting }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:13px;font-weight:700">Reconnecting…</span>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pausedBanner }}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="border-radius:18px;padding:12px 14px;background:var(--surface);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 5v14M15 5v14"/></svg>Paused. Take your time, then tap Resume.</div>
+    </sc-if>
+
+    <sc-if value="{{ inStep }}" hint-placeholder-val="{{ true }}">
+      <section style="border-radius:28px;background:var(--tintBlue);padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12px;font-weight:700;color:var(--accentText);background:var(--surface);border-radius:12px;padding:5px 10px">Step {{ stepNum }} of {{ stepCount }}</span>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--accentText)" aria-label="Hold timer, moves on automatically">Auto
+            <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="none" style="stroke:var(--ringTrack)" stroke-width="4"/><circle cx="20" cy="20" r="16" fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ ringDash }}" stroke-opacity="{{ ringOpacity }}" transform="rotate(-90 20 20)"/><text x="20" y="24.5" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--text)" font-family="Plus Jakarta Sans, sans-serif">{{ ringLabel }}</text></svg>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="width:108px;height:112px;border-radius:22px;background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="92" height="92" viewBox="0 0 100 100" role="img" aria-label="How to do: {{ stepName }}" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="{{ s0.d }}" stroke="{{ s0.s }}" stroke-width="{{ s0.w }}" stroke-dasharray="{{ s0.da }}"/>
+              <path d="{{ s1.d }}" stroke="{{ s1.s }}" stroke-width="{{ s1.w }}" stroke-dasharray="{{ s1.da }}"/>
+              <path d="{{ s2.d }}" stroke="{{ s2.s }}" stroke-width="{{ s2.w }}" stroke-dasharray="{{ s2.da }}"/>
+              <path d="{{ s3.d }}" stroke="{{ s3.s }}" stroke-width="{{ s3.w }}" stroke-dasharray="{{ s3.da }}"/>
+              <path d="{{ s4.d }}" stroke="{{ s4.s }}" stroke-width="{{ s4.w }}" stroke-dasharray="{{ s4.da }}"/>
+              <path d="{{ s5.d }}" stroke="{{ s5.s }}" stroke-width="{{ s5.w }}" stroke-dasharray="{{ s5.da }}"/>
+              <path d="{{ s6.d }}" stroke="{{ s6.s }}" stroke-width="{{ s6.w }}" stroke-dasharray="{{ s6.da }}"/>
+              <path d="{{ s7.d }}" stroke="{{ s7.s }}" stroke-width="{{ s7.w }}" stroke-dasharray="{{ s7.da }}"/>
+            </svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <h1 style="margin:0;font-size:21px;line-height:1.2;font-weight:800;letter-spacing:-0.01em">{{ stepName }}</h1>
+            <p style="margin:6px 0 0;font-size:14px;line-height:1.45;color:var(--text2)">{{ stepCue }}</p>
+          </div>
+        </div>
+      </section>
+
+      <div role="status" style="min-height:44px;border-radius:16px;padding:10px 14px;box-sizing:border-box;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;{{ statusStyle }}">
+        <sc-if value="{{ statusOk }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5.5-5.5"/></svg></sc-if>
+        <sc-if value="{{ statusWarn }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4M12 17h.01"/></svg></sc-if>
+        <sc-if value="{{ statusPause }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 5v14M15 5v14"/></svg></sc-if>
+        <span>{{ statusText }}</span>
+      </div>
+
+      <section style="background:var(--surface);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;min-height:26px">
+          <h2 style="margin:0;font-size:15px;font-weight:700">Live tracking</h2>
+          <sc-if value="{{ showChip }}" hint-placeholder-val="{{ true }}">
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--greenText);background:var(--tintGreen);border-radius:12px;padding:5px 10px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{{ chipText }}</span>
+          </sc-if>
+        </div>
+        <sc-if value="{{ hasWrist }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;justify-content:space-between;font-size:13px"><span style="font-weight:600">Hand tilt</span><span style="font-weight:700;{{ wristValueStyle }}">{{ wristLabel }}</span></div>
+            <div style="position:relative;height:18px">
+              <div style="position:absolute;top:0;height:18px;border-radius:6px;background:var(--band);{{ wristBandStyle }}"></div>
+              <div style="position:absolute;top:5px;left:0;right:0;height:8px;border-radius:4px;background:var(--track)"></div>
+              <div style="position:absolute;top:2px;left:50%;width:2px;height:14px;margin-left:-1px;background:var(--text3)"></div>
+              <div style="position:absolute;top:1px;width:16px;height:16px;border-radius:50%;border:2px solid var(--surface);box-sizing:border-box;box-shadow:0 1px 4px var(--shadow);{{ wristMarkerStyle }}"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3)"><span>Down</span><span>Level</span><span>Up</span></div>
+          </div>
+        </sc-if>
+        <sc-for list="{{ bars }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;justify-content:space-between;font-size:13px"><span style="font-weight:600">{{ f.name }}</span><span style="font-weight:700;{{ f.valueStyle }}">{{ f.label }}</span></div>
+            <div style="position:relative;height:18px">
+              <div style="position:absolute;top:0;height:18px;border-radius:6px;background:var(--band);{{ f.bandStyle }}"></div>
+              <div style="position:absolute;top:5px;left:0;right:0;height:8px;border-radius:4px;background:var(--track)"></div>
+              <div style="position:absolute;top:5px;left:0;height:8px;border-radius:4px;{{ f.fillStyle }}"></div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)"><span style="width:18px;height:10px;border-radius:3px;background:var(--band)"></span>Target zone for this step</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ roundDone }}" hint-placeholder-val="{{ false }}">
+      <section role="status" style="border-radius:28px;background:var(--tintGreen);padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" style="fill:var(--greenText)"/><path d="M20 33l8 8 16-17" style="stroke:var(--surface)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h1 style="margin:4px 0 0;font-size:24px;font-weight:800;color:var(--text)">Round {{ round }} complete</h1>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:var(--text2)">{{ roundNote }}</p>
+      </section>
+    </sc-if>
+  </div>
+
+  <div style="flex-shrink:0;padding:10px 20px 30px;display:flex;flex-direction:column;gap:10px;background:var(--bg)">
+    <sc-if value="{{ inStep }}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{ openSymptom }}" style="min-height:48px;border-radius:24px;border:1.5px solid var(--amberText);background:var(--tintAmber);color:var(--amberText);font-family:inherit;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4M12 17h.01"/></svg>Felt tingling or pain</button>
+      <div style="display:flex;gap:10px">
+        <button type="button" onClick="{{ prev }}" disabled="{{ atStart }}" aria-label="Previous step" style="width:72px;height:56px;border-radius:28px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;{{ backStyle }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M19 5.5v13l-9-6.5z"/><path d="M6 5v14"/></svg></button>
+        <button type="button" onClick="{{ togglePause }}" style="flex:1;height:56px;border-radius:28px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">
+          <sc-if value="{{ isPaused }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M8 5.5v13l10.5-6.5z"/></svg></sc-if>
+          <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M9 5v14M15 5v14"/></svg></sc-if>
+          {{ pauseLabel }}
+        </button>
+        <button type="button" onClick="{{ next }}" aria-label="Skip to next step" style="width:72px;height:56px;border-radius:28px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M5 5.5v13l9-6.5z"/><path d="M18 5v14"/></svg></button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ roundDone }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:10px">
+        <a href="Done{{ sfx }}.dc.html" style="flex:1;height:56px;border-radius:28px;border:1.5px solid var(--border);box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--text);text-decoration:none">Finish for now</a>
+        <sc-if value="{{ moreRounds }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ nextRound }}" style="flex:1;height:56px;border-radius:28px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">Start round {{ nextRoundNum }}</button>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end">
+      <button type="button" onClick="{{ closeSheet }}" aria-label="Close" style="position:absolute;inset:0;border:0;background:var(--scrim);cursor:pointer"></button>
+      <div role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="position:relative;background:var(--surface);border-radius:28px 28px 0 0;padding:12px 20px 34px;display:flex;flex-direction:column;gap:14px">
+        <span style="align-self:center;width:40px;height:5px;border-radius:3px;background:var(--border)"></span>
+        <sc-if value="{{ exitSheet }}" hint-placeholder-val="{{ false }}">
+          <h2 id="sheet-title" style="margin:0;font-size:20px;font-weight:800">End this session?</h2>
+          <p style="margin:0;font-size:15px;line-height:1.5;color:var(--text2)">{{ exitText }}</p>
+          <button type="button" onClick="{{ closeSheet }}" style="height:56px;border-radius:28px;border:0;background:var(--primary);color:var(--onPrimary);font-family:inherit;font-size:16px;font-weight:700;cursor:pointer">Resume</button>
+          <a href="Exercises{{ sfx }}.dc.html" style="height:56px;border-radius:28px;border:1.5px solid var(--border);box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--danger);text-decoration:none">End session</a>
+        </sc-if>
+        <sc-if value="{{ symptomSheet }}" hint-placeholder-val="{{ false }}">
+          <h2 id="sheet-title" style="margin:0;font-size:20px;font-weight:800">Stop and rest</h2>
+          <p style="margin:0;font-size:15px;line-height:1.5;color:var(--text2)">This set has stopped and the timer is paused. What did you feel?</p>
+          <div role="group" aria-label="Symptom" style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+            <sc-for list="{{ symptoms }}" as="o" hint-placeholder-count="4">
+              <button type="button" onClick="{{ o.pick }}" aria-pressed="{{ o.pressed }}" style="min-height:48px;border-radius:16px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <button type="button" onClick="{{ saveSymptom }}" disabled="{{ noSymptom }}" style="height:56px;border-radius:28px;border:0;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;{{ saveStyle }}">Save and end set</button>
+          <button type="button" onClick="{{ closeSheet }}" style="min-height:44px;border:0;background:transparent;color:var(--link);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">Cancel, keep going</button>
+        </sc-if>
+        <sc-if value="{{ savedSheet }}" hint-placeholder-val="{{ false }}">
+          <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" style="fill:var(--tintGreen)"/><path d="M20 33l8 8 16-17" style="stroke:var(--greenText)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h2 id="sheet-title" style="margin:0;font-size:20px;font-weight:800">Saved to your symptom log</h2>
+          <p style="margin:0;font-size:15px;line-height:1.5;color:var(--text2)">{{ savedText }}</p>
+          <a href="Home{{ sfx }}.dc.html" style="height:56px;border-radius:28px;background:var(--primary);color:var(--onPrimary);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none">Back to home</a>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"exercise":{"editor":"enum","options":["Tendon glides","Wrist tilts","Median nerve glide","Grip and release","Wrist flexor stretch","Wrist extensor stretch","Thumb bend and stretch","Single finger bends"],"default":"Tendon glides"},"preview":{"editor":"enum","options":["Live","Paused","Disconnected","Exit sheet","Symptom sheet","Symptom saved","Round complete"],"default":"Live"},"autoplay":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  exData() {
+    const dark = this.props.theme === 'Dark';
+    const N = dark ? '#A8BBD6' : '#1E3A5F', B = '#2563EB', L = dark ? '#3D6199' : '#9CC2F7', Y = '#E0A21B';
+    const S = (d, s, w, da) => ({ d: d, s: s, w: w, da: da || 'none' });
+    const side = (f) => [S('M33 57V86', N, 18), S(f, B, 10)];
+    const tips = { i: [38, 20], m: [47, 14], r: [56, 18], p: [64, 28] };
+    const spread = { i: 'M39 52L30 20', m: 'M47 50V14', r: 'M56 52L62 19', p: 'M63 56L74 30' };
+    const front = (o) => {
+      const out = [S('M50 62V80', N, 34)];
+      ['i', 'm', 'r', 'p'].forEach((k) => {
+        const bent = !!o.bent && o.bent.indexOf(k) >= 0;
+        const on = !!o.on && o.on.indexOf(k) >= 0;
+        out.push(S(o.spread ? spread[k] : 'M' + tips[k][0] + ' 50V' + (bent ? 40 : tips[k][1]), on ? B : N, k === 'p' ? 8 : 9));
+      });
+      out.push(S({ relaxed: 'M36 76L22 58', close: 'M36 74L31 52', wide: 'M36 76L11 64', across: 'M38 78L58 70' }[o.thumb || 'relaxed'], o.thumbOn ? B : N, 10));
+      if (o.helper) out.push(S(o.helper, L, 14));
+      return out;
+    };
+    const wrist = (deg, extra) => {
+      const r = deg * Math.PI / 180;
+      const out = [S('M8 62H44', N, 16)];
+      if (deg !== 0) out.push(S('M50 62H84', L, 2, '3 5'));
+      out.push(S('M48 62L' + (48 + 32 * Math.cos(r)).toFixed(1) + ' ' + (62 - 32 * Math.sin(r)).toFixed(1), B, 12));
+      return out.concat(extra || []);
+    };
+    const four = (lo, hi, v) => [['Thumb', v[0], lo, hi], ['Index', v[1], lo, hi], ['Middle', v[2], lo, hi], ['Ring', v[3], lo, hi]];
+    const WN = 'Wrist neutral';
+    return {
+      'Tendon glides': { rounds: 10, round: 6, hold: 3, start: 1, steps: [
+        { name: 'Straight hand', cue: 'Fingers straight up, thumb relaxed. Keep your wrist level.', pic: side('M38 52V8'), bars: four(0, 15, [8, 5, 6, 9]), chip: WN },
+        { name: 'Hook fist', cue: 'Bend the top two joints. Keep your knuckles straight.', pic: side('M38 52V30L51 32L49 42'), bars: four(55, 80, [62, 74, 79, 51]), chip: WN },
+        { name: 'Full fist', cue: 'Curl all the way in with your thumb over your fingers. No squeezing.', pic: side('M38 52H58V65H48'), bars: four(80, 100, [84, 90, 94, 88]), chip: WN },
+        { name: 'Tabletop', cue: 'Bend only at the knuckles. Fingers stay long and flat.', pic: side('M38 52H81'), bars: four(40, 60, [45, 52, 50, 47]), chip: WN },
+        { name: 'Straight fist', cue: 'Bend the knuckles and middle joints. Fingertips stay straight.', pic: side('M38 52H58V85'), bars: four(65, 85, [70, 76, 72, 68]), chip: WN }
+      ] },
+      'Wrist tilts': { rounds: 10, round: 4, hold: 5, start: 1, steps: [
+        { name: 'Start level', cue: 'Rest your forearm on a table with your hand past the edge, palm down. Let the wrist sit level.', pic: wrist(0), wrist: [3, -10, 10] },
+        { name: 'Tilt up', cue: 'Slowly lift the back of your hand toward the ceiling. Keep your fingers relaxed.', pic: wrist(40), wrist: [41, 30, 60] },
+        { name: 'Tilt down', cue: 'Let your hand drop toward the floor, only as far as feels comfortable.', pic: wrist(-40), wrist: [-24, -60, -30] }
+      ] },
+      'Median nerve glide': { rounds: 5, round: 2, hold: 5, start: 0, steps: [
+        { name: 'Soft fist', cue: 'Keep your wrist level. Curl your fingers into a fist with your thumb outside.', pic: front({ bent: 'imrp', on: 'imrp', thumb: 'across', thumbOn: true }), bars: [['All fingers', 86, 75, 100]], wrist: [2, -10, 10] },
+        { name: 'Open hand', cue: 'Straighten your fingers and thumb. Keep the thumb close to your index finger.', pic: front({ on: 'imrp', thumb: 'close', thumbOn: true }), bars: [['All fingers', 6, 0, 15]], wrist: [4, -10, 10] },
+        { name: 'Wrist back', cue: 'Keep your fingers straight and bend your wrist back, palm facing away from you.', pic: wrist(50), bars: [['All fingers', 8, 0, 15]], wrist: [46, 35, 70] },
+        { name: 'Thumb out', cue: 'Hold that position and move your thumb out to the side, away from your palm.', pic: front({ thumb: 'wide', thumbOn: true }), bars: [['Thumb', 9, 0, 15]], wrist: [44, 35, 70] },
+        { name: 'Palm up', cue: 'Turn your forearm so your palm faces up. Keep the wrist bent back.', pic: wrist(45, [S('M18 48A7 14 0 1 0 30 48', Y, 3), S('M30 48l-5-2M30 48l-1 5', Y, 3)]), bars: [['All fingers', 7, 0, 15]], wrist: [41, 35, 70], chip: 'Palm up' },
+        { name: 'Gentle stretch', cue: 'Use your other hand to ease the thumb back a little. Stop if tingling increases.', pic: front({ thumb: 'wide', thumbOn: true, helper: 'M5 56L12 49' }), bars: [['Thumb', 4, 0, 15]], wrist: [43, 35, 70] }
+      ] },
+      'Grip and release': { rounds: 10, round: 7, hold: 2, start: 1, steps: [
+        { name: 'Soft fist', cue: 'Close your hand gently into a fist. There is no need to squeeze.', pic: side('M38 52H58V65H48'), bars: four(75, 100, [80, 88, 91, 86]), chip: WN },
+        { name: 'Spread wide', cue: 'Open your hand and stretch your fingers out, straight and wide.', pic: front({ spread: true, on: 'imrp', thumb: 'wide', thumbOn: true }), bars: four(0, 15, [6, 4, 21, 7]), chip: WN }
+      ] },
+      'Wrist flexor stretch': { rounds: 3, round: 1, hold: 15, start: 1, steps: [
+        { name: 'Arm out, palm up', cue: 'Hold your arm straight out in front of you, elbow straight, palm facing up.', pic: wrist(0), wrist: [2, -10, 10] },
+        { name: 'Ease fingers down', cue: 'With your other hand, gently bend your fingers toward the floor until you feel a light stretch.', pic: wrist(-55, [S('M71 84L77 93', L, 12)]), wrist: [-52, -80, -40] }
+      ] },
+      'Wrist extensor stretch': { rounds: 3, round: 1, hold: 15, start: 1, steps: [
+        { name: 'Arm out, palm down', cue: 'Hold your arm straight out in front of you, elbow straight, palm facing down.', pic: wrist(0), wrist: [-3, -10, 10] },
+        { name: 'Ease hand down', cue: 'With your other hand, gently press the back of your hand so your fingers point down.', pic: wrist(-55, [S('M63 70L69 64', L, 12)]), wrist: [-36, -80, -40] }
+      ] },
+      'Thumb bend and stretch': { rounds: 5, round: 2, hold: 5, start: 0, steps: [
+        { name: 'Thumb across palm', cue: 'Bend your thumb across your palm toward the base of your little finger.', pic: front({ thumb: 'across', thumbOn: true }), bars: [['Thumb', 72, 60, 95]], chip: WN },
+        { name: 'Thumb out wide', cue: 'Now move your thumb out and away from your fingers, as far as is comfortable.', pic: front({ thumb: 'wide', thumbOn: true }), bars: [['Thumb', 7, 0, 15]], chip: WN }
+      ] },
+      'Single finger bends': { rounds: 5, round: 3, hold: 3, start: 1, steps: [
+        { name: 'Bend index', cue: 'Bend only your index finger toward your palm. Keep the others straight.', pic: front({ bent: 'i', on: 'i' }), bars: [['Index', 68, 60, 95], ['Middle', 9, 0, 20], ['Ring', 14, 0, 20]], chip: WN },
+        { name: 'Bend middle', cue: 'Bend only your middle finger. Let the index and ring fingers stay straight.', pic: front({ bent: 'm', on: 'm' }), bars: [['Index', 6, 0, 20], ['Middle', 71, 60, 95], ['Ring', 26, 0, 20]], chip: WN },
+        { name: 'Bend ring', cue: 'Bend only your ring finger. Go slowly, it is the hardest one to move alone.', pic: front({ bent: 'r', on: 'r' }), bars: [['Index', 5, 0, 20], ['Middle', 17, 0, 20], ['Ring', 64, 60, 95]], chip: WN }
+      ] }
+    };
+  }
+  ex() {
+    const all = this.exData();
+    const name = all[this.props.exercise] ? this.props.exercise : 'Tendon glides';
+    return { name: name, d: all[name] };
+  }
+  S() {
+    const e = this.ex();
+    const st = this.state || {};
+    if (st.ex === e.name) return st;
+    const p = this.props.preview || 'Live';
+    const sym = p === 'Symptom sheet' || p === 'Symptom saved';
+    return {
+      ex: e.name, i: e.d.start, round: e.d.round, ticks: 0, fixed: false, sound: true,
+      left: this.props.autoplay ? e.d.hold : Math.max(1, Math.round(e.d.hold * 0.6)),
+      paused: p === 'Paused', disc: p === 'Disconnected', reconnecting: false,
+      sheet: p === 'Exit sheet' ? 'exit' : (sym ? 'symptom' : ''),
+      symptom: p === 'Symptom saved' ? 'Tingling' : '', saved: p === 'Symptom saved',
+      roundDone: p === 'Round complete', handled: this.props.gloveEvent
+    };
+  }
+  put(patch) {
+    this.setState(Object.assign({}, this.S(), patch));
+  }
+  isDisc(s) {
+    return !!s.disc || (!!this.props.gloveEvent && this.props.gloveEvent !== s.handled);
+  }
+  model(s) {
+    const e = this.ex();
+    const p = e.d.steps[s.i];
+    const fix = (v, lo, hi) => (v >= lo && v <= hi) ? v : Math.round((lo + hi) / 2);
+    let msg = '';
+    let wrist = null;
+    if (p.wrist) {
+      const lo = p.wrist[1], hi = p.wrist[2];
+      const v = s.fixed ? fix(p.wrist[0], lo, hi) : p.wrist[0];
+      const ok = v >= lo && v <= hi;
+      if (!ok) msg = v < lo ? 'Hand: tilt it a little higher.' : 'Hand: tilt it a little lower.';
+      wrist = {
+        label: (Math.abs(v) <= 3 ? 'Level' : (v > 0 ? v + '° up' : (-v) + '° down')) + (ok ? '' : (v < lo ? ' · go higher' : ' · go lower')),
+        valueStyle: ok ? 'color:var(--text)' : 'color:var(--amberText)',
+        bandStyle: 'left:' + ((lo + 90) / 1.8).toFixed(1) + '%;width:' + ((hi - lo) / 1.8).toFixed(1) + '%',
+        markerStyle: 'left:calc(' + ((v + 90) / 1.8).toFixed(1) + '% - 8px);background:' + (ok ? 'var(--primary)' : 'var(--amberFill)')
+      };
+    }
+    const who = (l) => l === 'All fingers' ? 'Fingers' : (l === 'Thumb' ? 'Thumb' : l + ' finger');
+    const bars = (p.bars || []).map((b) => {
+      const lo = b[2], hi = b[3];
+      const v = s.fixed ? fix(b[1], lo, hi) : b[1];
+      const ok = v >= lo && v <= hi;
+      const low = hi <= 20;
+      if (!ok && !msg) msg = who(b[0]) + ': ' + (v < lo ? 'bend a little more.' : (low ? 'straighten a little more.' : 'ease off a little.'));
+      return {
+        name: b[0],
+        label: ok ? v + '%' : v + '% · ' + (v < lo ? 'bend more' : (low ? 'straighten' : 'ease off')),
+        valueStyle: ok ? 'color:var(--text)' : 'color:var(--amberText)',
+        bandStyle: 'left:' + lo + '%;width:' + (hi - lo) + '%',
+        fillStyle: 'width:' + Math.max(v, 3) + '%;background:' + (ok ? 'var(--primary)' : 'var(--amberFill)')
+      };
+    });
+    return { e: e, p: p, n: e.d.steps.length, msg: msg, allOk: !msg, wrist: wrist, bars: bars };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.rc);
+  }
+  tick() {
+    if (!this.props.autoplay) return;
+    const s = this.S();
+    if (s.paused || s.sheet || s.roundDone || this.isDisc(s)) return;
+    const m = this.model(s);
+    if (!m.allOk) { this.put(s.ticks >= 2 ? { fixed: true, ticks: 0 } : { ticks: s.ticks + 1 }); return; }
+    if (s.left > 1) { this.put({ left: s.left - 1 }); return; }
+    if (s.i < m.n - 1) this.put({ i: s.i + 1, left: m.e.d.hold, fixed: false, ticks: 0 });
+    else this.put({ roundDone: true });
+  }
+  renderVals() {
+    const g = this.gw();
+    const s = this.S();
+    const m = this.model(s);
+    const d = m.e.d;
+    const disc = this.isDisc(s);
+    const pic = m.p.pic.slice(0, 8);
+    while (pic.length < 8) pic.push({ d: 'M0 0', s: 'none', w: 0, da: 'none' });
+    let statusText = 'Good form. Hold still, next step in ' + s.left + ' s.';
+    let tone = 'ok';
+    if (disc) { statusText = 'Timer paused while the glove reconnects.'; tone = 'pause'; }
+    else if (s.paused) { statusText = 'Paused.'; tone = 'pause'; }
+    else if (!m.allOk) { statusText = m.msg; tone = 'warn'; }
+    const steps = (to) => ({ i: to, left: d.hold, fixed: false, ticks: 0 });
+    const more = s.round < d.rounds;
+    const symptom = s.symptom || '';
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      exName: m.e.name,
+      roundText: 'Round ' + s.round + ' of ' + d.rounds,
+      liveText: disc ? 'glove disconnected' : 'glove live',
+      liveDot: disc ? 'background:var(--amberFill)' : 'background:var(--primary)',
+      cueOn: s.sound, cueOff: !s.sound, cuePressed: String(!!s.sound),
+      cueColor: s.sound ? 'color:var(--link)' : 'color:var(--text3)',
+      toggleCue: () => this.put({ sound: !s.sound }),
+      segments: d.steps.map((x, k) => ({ style: 'background:' + (s.roundDone || k < s.i ? 'var(--greenText)' : (k === s.i ? 'var(--primary)' : 'var(--border)')) })),
+      stepNum: s.i + 1, stepCount: m.n, stepName: m.p.name, stepCue: m.p.cue,
+      s0: pic[0], s1: pic[1], s2: pic[2], s3: pic[3], s4: pic[4], s5: pic[5], s6: pic[6], s7: pic[7],
+      ringDash: m.allOk && !disc ? Math.round((d.hold - s.left) / d.hold * 101) + ' 101' : '0 101',
+      ringOpacity: m.allOk && !disc && s.left < d.hold ? 1 : 0,
+      ringLabel: (m.allOk ? s.left : d.hold) + 's',
+      disc: disc, canReconnect: disc && !s.reconnecting, reconnecting: disc && !!s.reconnecting,
+      reconnect: () => {
+        this.put({ reconnecting: true });
+        clearTimeout(this.rc);
+        this.rc = setTimeout(() => this.put({ reconnecting: false, disc: false, handled: this.props.gloveEvent }), 1500);
+      },
+      pausedBanner: s.paused && !disc && !s.roundDone,
+      inStep: !s.roundDone, roundDone: !!s.roundDone,
+      statusText: statusText,
+      statusOk: tone === 'ok', statusWarn: tone === 'warn', statusPause: tone === 'pause',
+      statusStyle: tone === 'ok' ? 'background:var(--tintBlue);color:var(--accentText)' : (tone === 'warn' ? 'background:var(--tintAmber);color:var(--amberText)' : 'background:var(--surface);color:var(--text2)'),
+      showChip: !!m.p.chip, chipText: m.p.chip || '',
+      hasWrist: !!m.wrist,
+      wristLabel: m.wrist ? m.wrist.label : '', wristValueStyle: m.wrist ? m.wrist.valueStyle : '',
+      wristBandStyle: m.wrist ? m.wrist.bandStyle : '', wristMarkerStyle: m.wrist ? m.wrist.markerStyle : '',
+      bars: m.bars,
+      atStart: s.i === 0,
+      backStyle: s.i === 0 ? 'opacity:0.4;cursor:not-allowed' : '',
+      prev: () => { if (s.i > 0) this.put(steps(s.i - 1)); },
+      next: () => (s.i < m.n - 1 ? this.put(steps(s.i + 1)) : this.put({ roundDone: true })),
+      isPaused: !!s.paused, isRunning: !s.paused,
+      pauseLabel: s.paused ? 'Resume' : 'Pause',
+      togglePause: () => this.put({ paused: !s.paused }),
+      round: s.round, moreRounds: more, nextRoundNum: s.round + 1,
+      roundNote: more ? (d.rounds - s.round) + (d.rounds - s.round === 1 ? ' round' : ' rounds') + ' to go. Shake your hands out and rest a few seconds first.' : 'That was the last round for today. Well done.',
+      nextRound: () => this.put(Object.assign(steps(0), { round: s.round + 1, roundDone: false })),
+      openSymptom: () => this.put({ sheet: 'symptom', symptom: '', saved: false }),
+      askExit: () => this.put({ sheet: 'exit' }),
+      closeSheet: () => { if (!s.saved) this.put({ sheet: '' }); },
+      sheetOpen: !!s.sheet,
+      exitSheet: s.sheet === 'exit',
+      exitText: 'You are on round ' + s.round + ', step ' + (s.i + 1) + '. Finished rounds are saved, so you can come back to this later.',
+      symptomSheet: s.sheet === 'symptom' && !s.saved,
+      savedSheet: s.sheet === 'symptom' && !!s.saved,
+      symptoms: ['Tingling', 'Numbness', 'Pain', 'Something else'].map((o) => ({
+        label: o, pressed: String(o === symptom),
+        style: o === symptom ? 'border:2px solid var(--amberText);background:var(--tintAmber);color:var(--amberText)' : 'border:1.5px solid var(--border);background:var(--surface);color:var(--text)',
+        pick: () => this.put({ symptom: o })
+      })),
+      noSymptom: !symptom,
+      saveStyle: symptom ? 'background:var(--primary);color:var(--onPrimary)' : 'background:var(--surface2);color:var(--text3);cursor:not-allowed',
+      saveSymptom: () => { if (symptom) this.put({ saved: true }); },
+      savedText: 'We noted ' + (symptom || 'it').toLowerCase() + ' during ' + m.p.name.toLowerCase() + '. Rest your hand for a few minutes. If it keeps happening, let your physiotherapist know.'
+    };
+  }
+}
+</script>
+</body>
+</html>

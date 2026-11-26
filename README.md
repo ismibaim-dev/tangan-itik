@@ -1,184 +1,116 @@
-# GripWise
+# Gripwise
 
-GripWise is an Android app for carpal tunnel rehabilitation. It guides you through a daily routine of nerve and tendon glides, stretches and light strengthening, with a timer that paces every hold, and a simple log that shows whether the routine is helping.
+Android app for the Gripwise smart glove, a final year project at UiTM Shah Alam for carpal tunnel syndrome (CTS) rehabilitation. The glove measures how each finger bends and how the wrist is tilted. The app guides the exercises hands-free, checks your form live and keeps a record of your recovery on your phone.
 
-**Everything stays on your phone.** There's no account and no server, and the app makes no network requests. You can export all your data as CSV files at any time.
+<p>
+  <img src="docs/screenshots/home.png" width="180" alt="Home">
+  <img src="docs/screenshots/session.png" width="180" alt="Live session">
+  <img src="docs/screenshots/progress.png" width="180" alt="Progress">
+  <img src="docs/screenshots/session-dark.png" width="180" alt="Live session, dark theme">
+</p>
 
-> GripWise offers general exercises and tracking. It does not diagnose or treat any condition and is not a substitute for a doctor or hand therapist.
+## Download and install
 
-## Install on Android
+1. On your Android phone, open the [latest release](https://github.com/ismibaim-dev/tangan-itik/releases/latest) and download `gripwise-vX.Y.Z.apk`.
+2. Open the file. If Android asks, allow your browser or Files app to install unknown apps.
+3. Open **Gripwise**.
 
-Requires Android 6.0 or newer with an up-to-date **Android System WebView** (version 111 or later, which the Play Store installs automatically on most phones). If it's too old, the app says so and explains how to update it.
+You need Android 8.0 or newer with Bluetooth. Each APK has a matching `.sha256` file if you want to check the download.
 
-1. On your phone, open the latest release: **https://github.com/ismibaim-dev/tangan-itik/releases/latest**
-2. Under **Assets**, tap `gripwise-vX.Y.Z.apk` to download it.
-3. Open the downloaded file. The first time, Android asks you to allow installs from your browser or Files app: tap **Settings**, allow it, then go back and tap **Install**.
-4. Google Play Protect may warn that the app comes from an unknown developer, because it isn't from the Play Store. Tap **More details > Install anyway**.
+**Coming from version 2.0.0?** Uninstall it first. It was signed with a different key, so Android won't install 3.0.0 over it.
 
-To check the download wasn't altered, compare its SHA-256 hash with the `.sha256` file attached to the same release.
+## Connect the glove
 
-## Features
+1. Flash `firmware/gripwise_glove.ino` to the ESP32 (it is the calibrated sketch, unchanged). It works with `csvAppMode` set to `false` or `true`.
+2. Power the glove on. It shows up as **Gripwise_Glove** (Classic Bluetooth).
+3. Optional but faster: pair it in your phone's Bluetooth settings.
+4. In the app, tap **Get started**, enter your first name, then tap **Allow Bluetooth** (Android calls it *Nearby devices*). The app finds the glove and shows live readings from all 5 sensors.
+5. Calibrate: hold an open hand, a gentle fist and a flat wrist for 3 seconds each.
 
-| Area | What it does |
-| --- | --- |
-| Onboarding | First name, affected and dominant hand, symptom duration, past surgery, goals, daily practice time and a safety acknowledgement |
-| Daily routine | Built from your current phase. If your latest pain score is 7/10 or higher, it switches to a gentle glides-only routine |
-| Guided session | Pain check-in, then a timed player (get ready, hold, relax, rest between sets) with sound, vibration and the screen kept on. Exercises can be skipped or paused, and a session can end early. A pain check-out gives feedback on the change |
-| Three-phase programme | *Calm & glide*, then *Restore flexibility*, then *Rebuild strength*. A phase unlocks after 6 sessions, a 7-day average pain of 3/10 or less, and no recent sessions that made pain worse. You can step back a phase at any time |
-| Symptom log | Pain, numbness and tingling (0–10), night waking, optional grip strength in kg, notes |
-| Weekly check | 11 questions adapted from the Boston Carpal Tunnel Questionnaire symptom scale, scored 1–5 and compared with your last check |
-| Progress | Streaks, totals, symptom trends, sessions per day or week, weekly scores and grip strength over 30 or 90 days, each with a table view |
-| Exercise library | 13 exercises with steps, dose, equipment and cautions. Later phases can be previewed |
-| Reminder | A daily notification at your practice time, switched on or off in Profile |
-| Your data | Export everything as CSV, or erase everything, from Profile |
+| Problem | Try this |
+|---|---|
+| "No glove found" | Check the glove has power, hold the phone within 1 m, pair Gripwise_Glove in Bluetooth settings, then tap **Search again**. |
+| Android 8–11 finds nothing | Scanning needs Location turned on in quick settings. Pairing first avoids this. |
+| Permission denied | Tap **Open settings**, then Permissions, and allow Nearby devices. |
+| Readings look wrong | Profile > Glove & calibration > **Recalibrate all**. The app warns you if a sensor barely moves between open hand and fist. |
+| Drops during a session | The timer pauses and the app reconnects by itself. Keep the phone close; the screen stays on during a session. |
 
-## Your data
+## Try it without the glove
 
-- **Where it's stored:** a SQLite database file in the app's private storage, which other apps can't read.
-- **Uninstalling deletes it.** Android's own app backup may include it if backup is turned on for your phone, but don't rely on that: export a copy now and then.
-- **Erase all data** in Profile deletes everything and returns the app to the welcome screen.
-- **Export all data (CSV)** in Profile creates five files and opens Android's share sheet, so you can save them to Files or Google Drive, or email them.
+On the welcome screen tap **Try with the demo glove**, or switch on Profile > Demo glove. The demo glove moves toward each pose the screen asks for, with some noise and a finger that lags now and then, so you can see the hints, holds and progress work.
 
-| File | One row per | Columns |
-| --- | --- | --- |
-| `gripwise-profile-<date>.csv` | profile | name, affected_hand, dominant_hand, symptom_duration, post_surgery, goals, reminder_time, phase, phase_started_at_utc, created_at_utc |
-| `gripwise-sessions-<date>.csv` | session | session_id, date, started_at_utc, completed_at_utc, duration_seconds, phase, gentle_routine, pain_before, pain_after, pain_change, exercises_done, exercises_total, notes |
-| `gripwise-session-exercises-<date>.csv` | exercise in a session | session_id, date, order, exercise, category, sets_completed, reps_completed, skipped |
-| `gripwise-symptom-logs-<date>.csv` | symptom log | log_id, date, logged_at_utc, pain, numbness, tingling, night_waking, grip_strength_kg, notes |
-| `gripwise-weekly-checks-<date>.csv` | weekly check | check_id, date, taken_at_utc, score, severity, then one column per question (night_pain … grip_small_objects), each answer 1–5 |
+## What the app does
 
-The files are UTF-8 with a byte-order mark, so Excel and Google Sheets open them correctly. `date` is your local calendar date, and `*_utc` columns are ISO 8601 timestamps in UTC. Text that a spreadsheet would treat as a formula starts with an apostrophe.
+- **Live session:** bend bars per finger and a wrist tilt meter. The hold timer counts down only while every target is in range, and moves to the next step on its own. Short slips are forgiven. Pause, back, skip, a sound and vibration cue, and a hint telling you which finger to fix.
+- **Felt tingling or pain:** stops the set and saves the symptom to your log.
+- **8 exercises:** 4 routines (tendon glides, wrist tilts, median nerve glide, grip and release) and 4 single moves.
+- **Home:** daily check-in and today's morning, afternoon and evening plan, each with a reminder time.
+- **Progress:** week and month reps, active days, change from the last period, best bend per finger and tingling reports.
+- **Export:** CSV files or a PDF report for your physiotherapist, saved to the phone or shared.
+- **Light, dark and system themes.**
 
-## Development
+## How it works
 
-GripWise is a React app (Vite, TypeScript, Tailwind CSS v4, TanStack Query, Recharts) packaged for Android with [Capacitor](https://capacitorjs.com/). The database is SQLite compiled to WebAssembly ([sql.js](https://sql.js.org/)).
+```
+ESP32 glove ──SPP, 1 line / 400 ms──▶ BluetoothGlove ──▶ PacketParser ──▶ GripwiseProcessor ──▶ SessionEngine ──▶ Room
+  4 flex sensors (raw 0–4095)          finds, connects,   readable or CSV   calibration → % bend,   hold timer,       sessions, steps,
+  MPU6050 accel X/Y (m/s²)             reconnects         line → frame      smoothing, wrist angle  auto-advance      symptoms, raw frames
+```
 
-Requirements: Node.js 20.19 or newer (22 recommended). To build the APK you also need JDK 21 and the Android SDK (platform 35), which [Android Studio](https://developer.android.com/studio) installs for you.
+| Firmware sends | App uses it as |
+|---|---|
+| `Thumb`, `Index`, `Middle`, `Ring` raw ADC | Bend % per finger, from your calibration (0 % open hand, 100 % gentle fist, either sensor direction) |
+| `Wrist(X,Y)` accel X | Wrist tilt in degrees, `asin(ax / 9.81)` minus your flat-wrist reading (positive = hand up) |
+| `Wrist(X,Y)` accel Y | Recorded in the raw data export |
+| `ACTION` state | Recorded with each frame |
+
+The firmware sends no battery level, so the app doesn't show one.
+
+```
+app/src/main/java/io/github/ismibaimdev/gripwise/
+  glove/        Bluetooth link, demo glove, line parser
+  processing/   calibration, smoothing, session engine
+  exercises/    exercise steps, targets and pictograms
+  data/         Room database, settings, progress maths
+  reminders/    daily notifications
+  export/       CSV and PDF export
+  ui/           Compose theme, components and screens
+design/         the approved design and clickable simulator
+firmware/       the ESP32 sketch
+```
+
+## Privacy
+
+Everything stays on the phone. There is no account, no server and no internet permission. Profile > Delete my data erases it all.
+
+## Build from source
+
+You need JDK 17 or newer and the Android SDK (platform 36).
 
 ```bash
-npm install
-npm run dev         # the app in a browser at http://localhost:5173 (data kept in IndexedDB)
-npm test            # data layer tests on an in-memory SQLite database
-npm run typecheck
-npm run android:apk # builds client/android/app/build/outputs/apk/debug/app-debug.apk
+./gradlew assembleDebug          # app/build/outputs/apk/debug/app-debug.apk
+./gradlew testDebugUnitTest      # unit tests + a Robolectric walk-through of the whole app
+./gradlew testDebugUnitTest --tests '*AppFlowTest*' -Pscreenshots   # also saves every screen to app/build/screenshots
 ```
-
-To run on a phone connected over USB with developer mode on: `adb install -r client/android/app/build/outputs/apk/debug/app-debug.apk`. To work in Android Studio, run `npx cap open android` from `client/`.
-
-Every pull request also builds a debug APK in CI, which you can download from the run's **Artifacts** to try on a phone.
-
-### Project structure
-
-```
-client/
-  src/data/        on-device database: schema, exercise library, programme rules, queries, CSV export, storage
-  src/pages/       one file per screen
-  src/components/  UI kit, app shell, pain scale, charts, route guards
-  src/lib/         dates, notifications, export delivery, timer cues
-  android/         Capacitor's native Android project
-```
-
-### Database
-
-```mermaid
-erDiagram
-  sessions ||--|{ session_exercises : contains
-  exercises ||--o{ session_exercises : "performed in"
-
-  profile {
-    int id PK "always 1"
-    text name
-    text affected_hand
-    text dominant_hand
-    text symptom_duration
-    int post_surgery
-    text goals
-    text reminder_time
-    int phase
-    text phase_started_at
-    text created_at
-  }
-  exercises {
-    int id PK
-    text slug UK
-    text name
-    text category
-    int phase
-    text steps
-    int sets
-    int reps
-    int hold_seconds
-    int rest_seconds
-  }
-  sessions {
-    int id PK
-    text local_date
-    text started_at
-    int duration_seconds
-    int phase
-    int flare_mode
-    int pain_before
-    int pain_after
-  }
-  session_exercises {
-    int id PK
-    int session_id FK
-    int exercise_id FK
-    int position
-    int sets_completed
-    int reps_completed
-    int skipped
-  }
-  symptom_logs {
-    int id PK
-    text local_date
-    int pain
-    int numbness
-    int tingling
-    int night_waking
-    real grip_strength_kg
-  }
-  assessments {
-    int id PK
-    text local_date
-    text answers
-    real score
-  }
-```
-
-- Schema changes go in `client/src/data/schema.ts` as a new numbered migration. Never edit one that has shipped: phones that already applied it won't run it again.
-- `CHECK` constraints enforce score ranges and allowed values in the database as well as in the code.
-- The database is saved after every change. On Android it's written to a temporary file first and then swapped in, so an interrupted save can't corrupt it.
 
 ## Releasing
 
-1. Add a section for the new version to `CHANGELOG.md`, headed like `## [2.1.0] - 2026-11-30`.
-2. Create the tag, either with `git tag v2.1.0 && git push origin v2.1.0`, or on GitHub with **Releases > Draft a new release**, typing `v2.1.0` as a new tag on `main`, then **Publish**.
-3. The **Release** workflow runs the checks, builds the APK and attaches `gripwise-v2.1.0.apk` and its `.sha256` to the release, using the changelog section as the notes.
+1. Add a `## [X.Y.Z] - date` section to `CHANGELOG.md`.
+2. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 
-### Signing key (set up once)
+The release workflow tests the code, builds the APK and publishes it with that changelog section as the notes.
 
-Android only installs an update over an existing app if both are signed with the same key. Without one, the workflow attaches a debug-signed APK and adds a note to the release: users then have to export their data, uninstall and reinstall to update.
-
-To sign releases properly, create a key once with `keytool` (it comes with JDK 21 and Android Studio):
+APKs are signed with the repo's public debug key until you add a release key. To use your own key, create one and add four repository secrets (Settings > Secrets and variables > Actions):
 
 ```bash
-keytool -genkeypair -v -keystore gripwise-release.keystore -alias gripwise \
-  -keyalg RSA -keysize 2048 -validity 10000
-base64 -w 0 gripwise-release.keystore > gripwise-release.keystore.b64   # macOS: base64 -i gripwise-release.keystore
+keytool -genkeypair -keystore gripwise.jks -alias gripwise -keyalg RSA -keysize 2048 -validity 10000
+base64 -w0 gripwise.jks   # paste the output as ANDROID_KEYSTORE_BASE64
 ```
 
-Then add these under **Settings > Secrets and variables > Actions** in the repository:
+Then add `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`gripwise`) and `ANDROID_KEY_PASSWORD`. Keep the `.jks` file safe. Switching keys means one more uninstall and reinstall.
 
-| Secret | Value |
-| --- | --- |
-| `ANDROID_KEYSTORE_BASE64` | contents of `gripwise-release.keystore.b64` |
-| `ANDROID_KEYSTORE_PASSWORD` | the keystore password you chose |
-| `ANDROID_KEY_ALIAS` | `gripwise` |
-| `ANDROID_KEY_PASSWORD` | the key password (the same as the keystore password if you pressed Enter) |
+## Disclaimer
 
-Keep the keystore file and passwords somewhere safe and never commit them. If the key is lost, no future version can update existing installs.
+Gripwise supports, and does not replace, advice from your doctor or physiotherapist. Stop any exercise that causes tingling, numbness or pain.
 
-## Design note
-
-The UI was designed from the project brief, because the Stitch design for this project couldn't be fetched (Stitch needs a Google sign-in, and the screen was still generating). Colours and type are tokens in `client/src/styles.css`, with matching Android colours in `client/android/app/src/main/res/values/colors.xml`.
+The font is Plus Jakarta Sans, under the SIL Open Font License (`FONT-LICENSE.txt`).

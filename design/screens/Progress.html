@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gripwise – Progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="{{ tokens }};position:relative;width:390px;height:844px;box-sizing:border-box;background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--text);display:flex;flex-direction:column;overflow:hidden">
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:52px 20px 20px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px">
+      <h1 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.02em">Progress</h1>
+      <a href="Export{{ sfx }}.dc.html" style="min-height:44px;padding:0 14px;border-radius:22px;background:var(--surface);display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);text-decoration:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Export</a>
+    </div>
+
+    <div role="group" aria-label="Time range" style="margin-top:12px;height:48px;border-radius:24px;background:var(--surface2);padding:4px;box-sizing:border-box;display:flex">
+      <button type="button" onClick="{{ showWeek }}" aria-pressed="{{ weekPressed }}" style="flex:1;border:0;border-radius:20px;font-family:inherit;font-size:14px;cursor:pointer;{{ weekStyle }}">Week</button>
+      <button type="button" onClick="{{ showMonth }}" aria-pressed="{{ monthPressed }}" style="flex:1;border:0;border-radius:20px;font-family:inherit;font-size:14px;cursor:pointer;{{ monthStyle }}">Month</button>
+    </div>
+
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="3">
+        <div style="background:var(--surface);border-radius:18px;padding:12px">
+          <div style="font-size:22px;font-weight:800;{{ k.style }}">{{ k.value }}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">{{ k.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <section style="margin-top:12px;background:var(--surface);border-radius:24px;padding:16px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div>
+          <h2 style="margin:0;font-size:15px;font-weight:700">{{ chartTitle }}</h2>
+          <p style="margin:2px 0 0;font-size:12px;color:var(--text3)">{{ rangeText }}</p>
+        </div>
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text2)"><span style="width:18px;border-top:1.5px dashed var(--text3)"></span>{{ goalText }}</span>
+      </div>
+      <div style="position:relative;margin-top:12px;height:146px;border-bottom:1.5px solid var(--line)">
+        <div style="position:absolute;left:0;right:0;border-top:1.5px dashed var(--text3);opacity:0.7;{{ goalStyle }}"></div>
+        <div style="position:absolute;inset:0;display:flex;gap:8px;align-items:flex-end">
+          <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <span style="position:relative;font-size:11px;padding:0 3px;border-radius:4px;background:var(--surface);{{ b.valueStyle }}">{{ b.value }}</span>
+              <div style="width:100%;max-width:30px;{{ b.style }}"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text3)">
+        <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7"><span style="flex:1;min-width:0;{{ b.labelStyle }}">{{ b.label }}</span></sc-for>
+      </div>
+    </section>
+
+    <section style="margin-top:12px;background:var(--surface);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <h2 style="margin:0;font-size:15px;font-weight:700">Best bend this {{ unit }}</h2>
+        <span style="font-size:12px;color:var(--text3)">vs last {{ unit }}</span>
+      </div>
+      <sc-for list="{{ fingers }}" as="f" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:56px minmax(0, 1fr) 40px 48px;align-items:center;gap:10px;min-height:28px;font-size:13px">
+          <span style="font-weight:600">{{ f.name }}</span>
+          <div style="height:8px;border-radius:4px;background:var(--track)"><div style="height:8px;border-radius:4px;background:var(--primary);{{ f.style }}"></div></div>
+          <span style="font-weight:700;text-align:right">{{ f.value }}</span>
+          <span style="font-size:12px;font-weight:700;color:var(--accentText);background:var(--tintBlue);border-radius:10px;padding:2px 0;text-align:center">{{ f.delta }}</span>
+        </div>
+      </sc-for>
+    </section>
+
+    <section style="margin-top:12px;background:var(--tintAmber);border-radius:20px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--amberText);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h3l2-4 3 8 3-10 2 6h5"/></svg></div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">{{ tingleTitle }}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:1px">{{ tingleSub }}</div>
+      </div>
+    </section>
+  </div>
+
+  <nav aria-label="Main" style="flex-shrink:0;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:0 -6px 20px var(--shadow);display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));padding:8px 12px 30px">
+    <a href="Home{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="Exercises{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Exercises</a>
+    <a href="Progress{{ sfx }}.dc.html" aria-current="page" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:700;color:var(--link)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>Progress</a>
+    <a href="Settings{{ sfx }}.dc.html" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;font-size:11px;font-weight:600;color:var(--text3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>Profile</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["Light","Dark"],"default":"Light"},"range":{"editor":"enum","options":["Week","Month"],"default":"Week"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  gw(name) {
+    const T = {"Light":{"bg":"#F4F7FB","surface":"#FFFFFF","surface2":"#E8EDF4","raised":"#FFFFFF","text":"#172033","text2":"#4A5568","text3":"#5F6B7E","line":"#E2E8F0","border":"#CBD5E1","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#2563EB","accentText":"#1D4ED8","tintBlue":"#E3EFFD","tintGreen":"#E2F3EC","tintAmber":"#FDEEE0","tintViolet":"#EEEAFB","tintYellow":"#FFF4D6","greenText":"#1F6B50","amberText":"#A4510E","violetText":"#5B47B8","yellowIcon":"#8A5A00","band":"#DCE8FC","ringTrack":"#C9DBF8","track":"rgba(23,32,51,0.08)","bar":"#A9C5F7","danger":"#C62828","dangerTint":"#FDECEC","navy":"#1E3A5F","amberFill":"#E8590C","shadow":"rgba(30,58,95,0.10)","scrim":"rgba(15,22,35,0.45)","gold":"#F6C34A","pale":"#9CC2F7","panel":"#DCEBFC"},"Dark":{"bg":"#000000","surface":"#151515","surface2":"#1A1A1A","raised":"#333333","text":"#F2F2F2","text2":"#B3B3B3","text3":"#8C8C8C","line":"#2A2A2A","border":"#3A3A3A","primary":"#2563EB","onPrimary":"#FFFFFF","link":"#6EA0FF","accentText":"#8AB4FF","tintBlue":"#0F1C33","tintGreen":"#0F2620","tintAmber":"#2E1C10","tintViolet":"#1C1830","tintYellow":"#2A2410","greenText":"#5FD3A5","amberText":"#F5A66B","violetText":"#A99BF0","yellowIcon":"#E8C060","band":"#1D3357","ringTrack":"#23395F","track":"rgba(255,255,255,0.14)","bar":"#2F4E85","danger":"#FF8A80","dangerTint":"#3A1414","navy":"#A8BBD6","amberFill":"#E8590C","shadow":"rgba(0,0,0,0.6)","scrim":"rgba(0,0,0,0.65)","gold":"#F6C34A","pale":"#3D6199","panel":"#0F1C33"}};
+    const n = (name || this.props.theme) === 'Dark' ? 'Dark' : 'Light';
+    const t = T[n];
+    return { tokens: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'), sfx: n === 'Dark' ? 'Dark' : '', dark: n === 'Dark' };
+  }
+  renderVals() {
+    const g = this.gw();
+    const range = (this.state && this.state.range) || this.props.range || 'Week';
+    const week = range === 'Week';
+    const R = week ? {
+      kpis: [['234', 'Reps this week', ''], ['5/7', 'Active days', ''], ['+12%', 'vs last week', 'color:var(--accentText)']],
+      title: 'Daily reps', text: 'Fri 20 – Thu 26 Nov', goal: 50, goalText: 'Goal 50 a day', max: 60,
+      bars: [['Fri', 42], ['Sat', 50], ['Sun', 0], ['Mon', 38], ['Tue', 56], ['Wed', 0], ['Today', 48]],
+      fingers: [['Thumb', 71, 4], ['Index', 88, 6], ['Middle', 90, 5], ['Ring', 82, 8]],
+      tingle: ['Tingling reported 2 times', 'Down from 5 the week before']
+    } : {
+      kpis: [['868', 'Reps this month', ''], ['19/30', 'Active days', ''], ['+18%', 'vs last month', 'color:var(--accentText)']],
+      title: 'Weekly reps', text: '27 Oct – 26 Nov, week starting', goal: 250, goalText: 'Goal 250 a week', max: 300,
+      bars: [['27 Oct', 142], ['3 Nov', 188], ['10 Nov', 176], ['17 Nov', 218], ['24 Nov', 144]],
+      fingers: [['Thumb', 71, 9], ['Index', 88, 11], ['Middle', 90, 10], ['Ring', 82, 14]],
+      tingle: ['Tingling reported 9 times', 'Down from 16 the month before']
+    };
+    const H = 120;
+    const last = R.bars.length - 1;
+    const on = 'background:var(--raised);font-weight:700;color:var(--text);box-shadow:0 2px 6px var(--shadow)';
+    const off = 'background:transparent;font-weight:600;color:var(--text2)';
+    return {
+      tokens: g.tokens, sfx: g.sfx,
+      weekPressed: String(week), monthPressed: String(!week),
+      weekStyle: week ? on : off, monthStyle: week ? off : on,
+      showWeek: () => this.setState({ range: 'Week' }),
+      showMonth: () => this.setState({ range: 'Month' }),
+      kpis: R.kpis.map((k) => ({ value: k[0], label: k[1], style: k[2] })),
+      chartTitle: R.title, rangeText: R.text, goalText: R.goalText,
+      goalStyle: 'bottom:' + Math.round(R.goal / R.max * H) + 'px',
+      bars: R.bars.map((b, i) => ({
+        label: week ? b[0] : (i === last ? 'This wk' : b[0]),
+        value: b[1],
+        valueStyle: i === last ? 'font-weight:800;color:var(--accentText)' : 'color:var(--text2)',
+        labelStyle: i === last ? 'color:var(--accentText);font-weight:800' : '',
+        style: b[1] === 0 ? 'height:4px;border-radius:2px;background:var(--border)' : 'height:' + Math.round(b[1] / R.max * H) + 'px;border-radius:8px 8px 3px 3px;background:' + (i === last ? 'var(--primary)' : 'var(--bar)')
+      })),
+      unit: week ? 'week' : 'month',
+      fingers: R.fingers.map((f) => ({ name: f[0], value: f[1] + '%', delta: '+' + f[2], style: 'width:' + f[1] + '%' })),
+      tingleTitle: R.tingle[0], tingleSub: R.tingle[1]
+    };
+  }
+}
+</script>
+</body>
+</html>
