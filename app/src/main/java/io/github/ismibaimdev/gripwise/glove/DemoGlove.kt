@@ -44,11 +44,12 @@ class DemoGlove(private val scope: CoroutineScope) : GloveSource {
     private var job: Job? = null
     private val rnd = Random(7)
 
-    fun setPose(p: Pose) {
+    /** Moves toward [p]. With [lag], one finger sometimes trails behind for a moment (off for calibration). */
+    fun setPose(p: Pose, lag: Boolean = true) {
         if (p == pose) return
         pose = p
         poseSetAt = System.currentTimeMillis()
-        laggard = if (rnd.nextFloat() < 0.45f) rnd.nextInt(4) else -1
+        laggard = if (lag && rnd.nextFloat() < 0.45f) rnd.nextInt(4) else -1
     }
 
     override fun start() {

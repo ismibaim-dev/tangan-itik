@@ -121,9 +121,9 @@ class CalibrateViewModel(private val c: AppContainer) : ViewModel() {
             var done = _ui.value.done.toMutableList()
             if (steps.size == 3) done = mutableListOf(false, false, false)
             for (k in steps) {
-                c.glove.setDemoPose(CAL_STEPS[k].pose)
+                c.glove.setDemoPose(CAL_STEPS[k].pose, lag = false)
                 _ui.value = _ui.value.copy(phase = CalUi.Phase.Running, step = k, leftMs = 3000, done = done.toList(), warning = null)
-                delay(700) // time to get into position
+                delay(1_000) // time to get into position
                 val samples = mutableListOf<IntArray>()
                 val axs = mutableListOf<Float>()
                 var left = 3000L
@@ -139,8 +139,9 @@ class CalibrateViewModel(private val c: AppContainer) : ViewModel() {
                     c.glove.setDemoPose(DemoGlove.Pose())
                     return@launch
                 }
-                val avg = List(4) { i -> samples.map { it[i] }.average().toInt() }
-                when (k) { 0 -> open = avg; 1 -> fist = avg; else -> ax = axs.average().toFloat() }
+                // Median, so a twitch or a slow start doesn't skew the reading.
+                val mid = List(4) { i -> samples.map { it[i] }.sorted()[samples.size / 2] }
+                when (k) { 0 -> open = mid; 1 -> fist = mid; else -> ax = axs.sorted()[axs.size / 2] }
                 done[k] = true
             }
             c.glove.setDemoPose(DemoGlove.Pose())

@@ -45,5 +45,5 @@ class GloveManager(context: Context, scope: CoroutineScope) {
     fun disconnect() = active.stop()
 
     /** Tells the demo glove which pose to move toward. Ignored for the real glove. */
-    fun setDemoPose(pose: DemoGlove.Pose) = demo.setPose(pose)
+    fun setDemoPose(pose: DemoGlove.Pose, lag: Boolean = true) = demo.setPose(pose, lag)
 }
