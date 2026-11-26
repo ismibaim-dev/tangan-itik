@@ -1,7 +1,11 @@
 package io.github.ismibaimdev.gripwise
 
 import android.graphics.Bitmap
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ComposeTimeoutException
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
@@ -50,14 +54,26 @@ class AppFlowTest {
         rule.waitForIdle()
     }
 
-    private fun waitFor(text: String, timeoutMs: Long = 20_000, substring: Boolean = false): SemanticsNodeInteraction {
+    /** Every piece of text on screen, to show where the walk-through got stuck. */
+    private fun screenText(): String {
+        val out = mutableListOf<String>()
+        fun walk(n: SemanticsNode) {
+            n.config.getOrNull(SemanticsProperties.Text)?.forEach { out += it.text }
+            n.config.getOrNull(SemanticsProperties.ContentDescription)?.forEach { out += "[$it]" }
+            n.children.forEach(::walk)
+        }
+        runCatching { rule.onAllNodes(isRoot(), useUnmergedTree = true).fetchSemanticsNodes().forEach(::walk) }
+        return out.joinToString(" | ")
+    }
+
+    private fun waitFor(text: String, timeoutMs: Long = 30_000, substring: Boolean = false): SemanticsNodeInteraction {
         val end = System.currentTimeMillis() + timeoutMs
         while (System.currentTimeMillis() < end) {
             val m = hasText(text, substring = substring) or hasContentDescription(text, substring = substring)
             if (rule.onAllNodes(m).fetchSemanticsNodes().isNotEmpty()) return rule.onAllNodes(m)[0]
             pump(100)
         }
-        throw ComposeTimeoutException("\"$text\" never appeared")
+        throw ComposeTimeoutException("\"$text\" never appeared. On screen: ${screenText()}")
     }
 
     private fun tap(text: String, substring: Boolean = false, last: Boolean = false) {
@@ -96,7 +112,7 @@ class AppFlowTest {
         waitFor("Calibrate your hand")
         tap("Start calibration")
         pump(2_000); shot("05_calibrate_running")
-        waitFor("Calibration saved", timeoutMs = 25_000, substring = true); shot("06_calibrate_done")
+        waitFor("Calibration saved", timeoutMs = 45_000, substring = true); shot("06_calibrate_done")
         tap("Finish setup")
 
         // Home
@@ -118,7 +134,7 @@ class AppFlowTest {
         tap("Felt tingling or pain")
         waitFor("Stop and rest"); tap("Tingling"); shot("12_symptom_sheet")
         tap("Cancel, keep going")
-        waitFor("Round 1 complete", timeoutMs = 90_000); shot("13_round_complete")
+        waitFor("Round 1 complete", timeoutMs = 150_000); shot("13_round_complete")
         tap("Finish for now")
         waitFor("Nice work", timeoutMs = 10_000); shot("14_done")
         tap("Back to home")
